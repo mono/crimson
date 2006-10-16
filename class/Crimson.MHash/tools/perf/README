@@ -1,0 +1,17 @@
+Mono has managed implementation of the following hash algorithms:
+
+* mscorlib.dll: MD5, SHA1, SHA256, SHA384, SHA512 and, only in 2.0, RIPEMD160
+* Mono.Security.dll: SHA224, MD2 and MD4
+
+Most UNIX system also have a md5sum and sha1sum that can be used to compare
+performance.
+
+HOWTO
+
+	make
+	mono bf.exe bigfile 1000000
+	time md5sum bigfile
+	time mono managed.exe MD5 bigfile
+	time mono native.exe MD5 bigfile
+
+Change size (x10) and retry.

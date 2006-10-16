@@ -1,0 +1,28 @@
+Crimson.MHash.dll
+
+
+* How to use
+
+In most cases you shouldn't reference this assembly directly. E.g. it is not
+required if you want performance benefits of using the native implementation 
+of the common hash algorithms. The .NET framework has a plug-able design that 
+allow re-mapping the implementations at runtime (using machine.config).
+
+However if you want to access the less common hash algorithms you'll need to
+reference Crimson.MHash.dll directly in your projects (or copy the required
+source files in your project).
+
+
+* License
+
+The C# files are all MIT X.11 licensed. However MHash itself is LGPL, so the
+end result is LGPL. The C# files are MIT X.11 licensed so they can be easily
+reused to wrap other native cryptographic libraries (without making the new
+project LGPL).
+
+
+* Notes
+
+The generated files are kept in SVN to allow anyone to build this assembly 
+even if the libmhash library isn't present on their system. However executing
+or testing the assembly won't work unless the library is present.

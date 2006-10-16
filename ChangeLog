@@ -1,0 +1,6 @@
+2006-10-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ChangeLog: New. Track project-wide changes.
+	* class/*: New. Class libraries.
+	* common/*: New. Common source for all Crimson assemblies and tools.
+	* README: New. Information about the Crimson project.

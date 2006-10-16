@@ -1,0 +1,51 @@
+2006-10-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ADLER32.cs: Base class for ADLER32.
+	* ADLER32Native.cs: Native ADLER32 hash implementation.
+	* CRC32B.cs: Base class for CRC32B.
+	* CRC32BNative.cs: Native CRC32B hash implementation.
+	* CRC32.cs: Base class for CRC32.
+	* CRC32Native.cs: Native CRC32 hash implementation.
+	* GOST.cs: Base class for GOST.
+	* GOSTNative.cs: Native GOST hash implementation.
+	* HAVAL128.cs: Base class for HAVAL 128.
+	* HAVAL128Native.cs: Native HAVAL 128 hash implementation.
+	* HAVAL160.cs: Base class for HAVAL 160.
+	* HAVAL160Native.cs: Native HAVAL 160 hash implementation.
+	* HAVAL192.cs: Base class for HAVAL 192.
+	* HAVAL192Native.cs: Native HAVAL 192 hash implementation.
+	* HAVAL224.cs: Base class for HAVAL 224.
+	* HAVAL224Native.cs: Native HAVAL 224 hash implementation.
+	* HAVAL256.cs: Base class for HAVAL 256.
+	* HAVAL256Native.cs: Native HAVAL 256 hash implementation.
+	* MD2.cs: Base class for MD2.
+	* MD2Native.cs: Native MD2 hash implementation.
+	* MD4.cs: Base class for MD4.
+	* MD4Native.cs: Native MD4 hash implementation.
+	* MD5Native.cs: Native MD5 hash implementation.
+	* RIPEMD128.cs: Base class for RIPEMD 128.
+	* RIPEMD128Native.cs: Native RIPEMD 128 hash implementation.
+	* RIPEMD160.cs: Base class for RIPEMD 160.
+	* RIPEMD160Native.cs: Native RIPEMD 160 hash implementation.
+	* RIPEMD256.cs: Base class for RIPEMD 256.
+	* RIPEMD256Native.cs: Native RIPEMD 256 hash implementation.
+	* RIPEMD320.cs: Base class for RIPEMD 320.
+	* RIPEMD320Native.cs: Native RIPEMD 320 hash implementation.
+	* SHA1Native.cs: Native SHA-1 hash implementation.
+	* SHA224.cs: Base class for SHA 224.
+	* SHA224Native.cs: Native SHA 224 hash implementation.
+	* SHA256Native.cs: Native SHA 256 hash implementation.
+	* SHA384Native.cs: Native SHA 384 hash implementation.
+	* SHA512Native.cs: Native SHA 512 hash implementation.
+	* SNEFRU128.cs: Base class for SNEFRU 128.
+	* SNEFRU128Native.cs: Native SNEFRU 128 hash implementation.
+	* SNEFRU256.cs: Base class for SNEFRU 256.
+	* SNEFRU256Native.cs: Native SNEFRU 256 hash implementation.
+	* TIGER128.cs: Base class for TIGER 128.
+	* TIGER128Native.cs: Native TIGER 128 hash implementation.
+	* TIGER160.cs: Base class for TIGER 160.
+	* TIGER160Native.cs: Native TIGER 160 hash implementation.
+	* TIGER192.cs: Base class for TIGER 192.
+	* TIGER192Native.cs: Native TIGER 192 hash implementation.
+	* WHIRLPOOL.cs: Base class for WHIRLPOOL.
+	* WHIRLPOOLNative.cs: Native WHIRLPOOL hash implementation.

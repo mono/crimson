@@ -1,0 +1,21 @@
+Crimson offers a superset of the cryptographic features available in the .NET
+framework. For various reasons Crimson isn't distributed within Mono. The main 
+reasons being:
+
+* Target audience
+
+	As a superset to both .NET and Mono cryptographic features, Crimson
+	is useful to everyone, not just Mono users.
+
+* Support
+
+	Crimson is not required inside Mono to reach feature parity with MS 
+	implementation of the .NET framework and it's related tools. As such
+	supporting Crimson is not the goal of the Mono project.
+
+* Export restriction on cryptographic software
+
+	Laws regarding export and, sometimes import, of cryptography are 
+	diverse and complex. It is difficult to add/remove algorithms and 
+	keep all the required paperwork in sync. Distribution as source-only
+	makes this a lot easier.

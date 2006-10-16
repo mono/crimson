@@ -1,0 +1,10 @@
+2006-10-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AUTHORS: New.
+	* ChangeLog: New. Track library changes.
+	* Crimson.MHash.dll.sources: List of source files to build the 
+	assembly.
+	* LICENSE.LGPL: License of libmhash
+	* Makefile: New. Build assembly.
+	* MIT.X11: License of the wrapper code (when not used with libmhash)
+	* README: New. Information about the wrapper assembly.

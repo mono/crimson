@@ -1,0 +1,5 @@
+2006-10-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ChangeLog: New. Track changes.
+	* generator.cs: New. Generate wrapper source files.
+	* Makefile: build generator.exe and source files.

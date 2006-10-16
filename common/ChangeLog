@@ -1,0 +1,4 @@
+2006-10-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Locale.cs: New. Include a copy of Mono's Locale.cs so we can
+	reuse Mono localization stuff when ready.

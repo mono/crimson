@@ -1,0 +1,18 @@
+The following assemblies are available in Crimson:
+
+* Crimson.MHash.dll
+
+	This assembly provides wrapper around the native hash implementations 
+	around libmhash (http://mhash.sourceforge.net/). It serve two main 
+	purposes:
+
+	* it provides native (and potentially faster) implementation of common
+	hash algorithms (e.g. MD5, SHA1, SHA-256/384/512) already part of the
+	.NET framework;
+
+	* it provides implementation for many, less know (e.g. TIGER, SNEFRU)
+	or non-cryptographic (e.g. CRC32), hash algorithms.
+
+
+The Crimson module is open to new wrappers around existing cryptographic 
+libraries as well as new crypto-related ideas.

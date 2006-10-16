@@ -1,0 +1,6 @@
+2006-10-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* MHashHelper.cs: New. Helper class used by generated code.
+	* MHashId.cs: New. Enum of all hash algorithms currently supported
+	in libmhash.
+	* MHashWrapper.cs: P/Invoke declarations to use libmhash.

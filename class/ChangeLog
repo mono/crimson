@@ -1,0 +1,6 @@
+2006-10-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ChangeLog: New. Track libraries-wide changes.
+	* crimson.snk: New. Strongname key for Crimson libraries;
+	* Crimson.MHash/*: New. Wrapper for libmhash;
+	* README: New. Description about the libraries;
