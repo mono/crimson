@@ -3,9 +3,10 @@
 //
 // Authors:
 //	Andreas Nahr (ClassDevelopment@A-SoftTech.com)
-//	Sebastien Pouliot  (sebastien@ximian.com)
+//	Sebastien Pouliot  (sebastien@xamarin.com)
 //
 // Copyright (C) 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2012 Xamarin Inc. (http://www.xamarin.com)
 //
 
 using System;
@@ -24,8 +25,8 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyVersion ("1.1.0.0")]
 #endif
 
-[assembly: AssemblyCompany ("Novell and contributors")]
-[assembly: AssemblyCopyright ("(C) 2006 Novell")]
+[assembly: AssemblyCompany ("Novell, Xamarin and contributors")]
+[assembly: AssemblyCopyright ("(C) 2006 Novell, (C) 2012 Xamarin Inc.")]
 [assembly: AssemblyDescription ("Crimson MHash Wrapper Assembly")]
 [assembly: AssemblyTitle ("Crimson.MHash.dll")]
 [assembly: CLSCompliant (true)]
@@ -35,4 +36,3 @@ using System.Runtime.InteropServices;
 [assembly:SecurityPermission (SecurityAction.RequestMinimum, UnmanagedCode=true)]
 
 [assembly: AssemblyDelaySign (false)]
-[assembly: AssemblyKeyFile ("../crimson.snk")]
