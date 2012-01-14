@@ -1,0 +1,3 @@
+Those files are a subset of the Mono's unit tests for cryptographic algorithms.
+
+They are intended to be executed against any implementation of a specific algorithm to check both it's conformance (to it's specification) and that it match the expected behaviour when executed in the .NET framework (e.g. as a replacement).
