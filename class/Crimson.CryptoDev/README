@@ -1,8 +1,34 @@
-This assembly goal is to provide a managed wrapper on to of /dev/crypto
-known as `cryptodev`.
+This assembly goal is to provide a managed wrapper on to /dev/crypto
+also known as `cryptodev`.
 
 References:
 * http://home.gna.org/cryptodev-linux/
+
+
+CryptoDev Availability
+----------------------
+
+Most Linux distributions do not ship /dev/crypto so you'll have to:
+
+1. build it yourself (from the above link);
+
+2. install the driver, e.g.
+
+	sudo insmod /path/to/cryptodev.ko
+
+3. give read/write permissions to the device, e.g. for everyone do:
+
+	sudo chmod 666 /dev/crypto
+
+
+Building
+--------
+
+If a recent mono is available then 'make' should be enough to build
+the generator (creating the source files) and then build the assembly
+
+You can verify that everything works, if nunit is available, by doing
+'make run-test'
 
 
 mv_cesa specific notes
