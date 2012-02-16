@@ -1,5 +1,11 @@
 The following assemblies are available in Crimson:
 
+* Crimson.CryptoDev.dll
+
+	This assembly provides wrapper around the kernel cryptographic 
+	algorithm implementations, either native or hardware accelerated.
+	Ref: http://home.gna.org/cryptodev-linux/
+
 * Crimson.MHash.dll
 
 	This assembly provides wrapper around the native hash implementations 
