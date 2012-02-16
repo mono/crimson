@@ -1,0 +1,42 @@
+This assembly goal is to provide a managed wrapper on to of /dev/crypto
+known as `cryptodev`.
+
+References:
+* http://home.gna.org/cryptodev-linux/
+
+
+mv_cesa specific notes
+----------------------
+
+Hardware have limited internal buffers to work on. The drivers should 
+make this limit invisible to callers. This is not (always) the case.
+
+Testing as show that the hardware limit is hit if we use more than:
+
+1920 bytes for SHA1
+1936 bytes for AES
+
+As such the code can be adapted to work with those limits. By default
+the implementations will use a limit of Int32.MaxValue but, if defined
+differently, will iterate large buffers based on a smaller limit (and
+workaround the driver limitation).
+
+Generated code for symmetric ciphers (e.g. AES) will, by default, contain:
+
+		const int BufferBlockSize = Int32.MaxValue;
+
+and this can be changed to:
+
+		const int BufferBlockSize = 1936; // mv_cesa limit
+
+Generated code for digest algorithms (e.g. SHA1) can be modified by 
+adding a new line in their constructor, like:
+
+		public SHA1Kernel ()
+		{
+			BufferBlockSize = 1920; // add this line
+		}
+
+Since having those limits potentially requires a lot more native/kernels
+calls, reducing overall performance, it should only be used if required.
+
