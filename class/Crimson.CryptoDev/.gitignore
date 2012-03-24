@@ -1,5 +1,5 @@
 *.dll*
-Crimson.Security.Cryptography/
+Crimson.Security.Cryptography/*.g.cs
 CryptoTools.cs
 SymmetricTransform.cs
 TestResult.xml
