@@ -404,12 +404,12 @@ namespace Crimson.CryptoDev {
 					if (res [total - 1 - i] != 0x00)
 						ThrowBadPaddingException (padding, -1, i);
 				}
-				total -= padding;
+				total -= pad;
 				break;
 			case PaddingMode.ISO10126:
 				if ((pad == 0) || (pad > BlockSizeByte))
 					ThrowBadPaddingException (padding, pad, -1);
-				total -= padding;
+				total -= pad;
 				break;
 			case PaddingMode.PKCS7:
 				if ((pad == 0) || (pad > BlockSizeByte))
@@ -418,7 +418,7 @@ namespace Crimson.CryptoDev {
 					if (res [total - 1 - i] != pad)
 						ThrowBadPaddingException (padding, -1, i);
 				}
-				total -= padding;
+				total -= pad;
 				break;
 			case PaddingMode.None:	// nothing to do - it's a multiple of block size
 			case PaddingMode.Zeros:	// nothing to do - user must unpad himself
