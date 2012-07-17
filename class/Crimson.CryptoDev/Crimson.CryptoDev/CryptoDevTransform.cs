@@ -151,8 +151,10 @@ namespace Crimson.CryptoDev {
 					fixed (byte *i = &iv [0])
 						context.iv = (IntPtr) i;
 
-					if (!encrypt)
-						Buffer.BlockCopy (input, length - BlockSizeByte, save_iv, 0, BlockSizeByte);
+					if (!encrypt) {
+						int ivOffset = inputOffset + size - BlockSizeByte;
+						Buffer.BlockCopy (input, ivOffset, save_iv, 0, BlockSizeByte);
+					}
 				}
 
 				fixed (byte *i = &input [inputOffset])
