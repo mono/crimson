@@ -62,5 +62,8 @@ Crimson.CryptoDev.Tests.dll: $(BASE_TESTS) $(GENERATED_TESTS) Crimson.CryptoDev.
 test: Crimson.CryptoDev.Tests.dll
 
 run-test: test
+	@echo running tests without buffer limits
 	nunit-console Crimson.CryptoDev.Tests.dll
+	@echo running tests with Rijndael/AES limited to 1936 and SHA1 limited to 1920 bytes
+	CRIMSON_AES_BUFFER_BLOCK_SIZE=1936 CRIMSON_RIJNDAEL_BUFFER_BLOCK_SIZE=1936 CRIMSON_SHA1_BUFFER_BLOCK_SIZE=1920 nunit-console Crimson.CryptoDev.Tests.dll
 
