@@ -47,21 +47,19 @@ the implementations will use a limit of Int32.MaxValue but, if defined
 differently, will iterate large buffers based on a smaller limit (and
 workaround the driver limitation).
 
-Generated code for symmetric ciphers (e.g. AES) will, by default, contain:
+Changing this limit is done using environment variables, e.g.
 
-		const int BufferBlockSize = Int32.MaxValue;
+CRIMSON_AES_BUFFER_BLOCK_SIZE=1936 make run-test
 
-and this can be changed to:
+will run the unit tests using a block size limited to 1936 bytes.
+While
 
-		const int BufferBlockSize = 1936; // mv_cesa limit
+CRIMSON_SHA1_BUFFER_BLOCK_SIZE=1920 make run-test
 
-Generated code for digest algorithms (e.g. SHA1) can be modified by 
-adding a new line in their constructor, like:
+will run the unit tests with a block size limited to 1920 bytes.
 
-		public SHA1Kernel ()
-		{
-			BufferBlockSize = 1920; // add this line
-		}
+This way each algorithm limitation can be configured separately. Even
+if the limit is likely identical between many of them.
 
 Since having those limits potentially requires a lot more native/kernels
 calls, reducing overall performance, it should only be used if required.

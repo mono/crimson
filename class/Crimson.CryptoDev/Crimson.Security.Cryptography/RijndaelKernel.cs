@@ -44,9 +44,14 @@ namespace Crimson.Security.Cryptography {
 
 	public class RijndaelKernel : Rijndael {
 
-		//const int BufferBlockSize = Int32.MaxValue;
-		const int BufferBlockSize = 1936; // mv_cesa limit
-		
+		static RijndaelKernel()
+		{
+			string blockSize = Environment.GetEnvironmentVariable ("CRIMSON_RIJNDAEL_BUFFER_BLOCK_SIZE");
+			BufferBlockSize = blockSize == null ? Int32.MaxValue : Convert.ToInt32 (blockSize);
+		}
+
+		public static int BufferBlockSize { get; set; }
+
 		public RijndaelKernel ()
 		{
 		}
