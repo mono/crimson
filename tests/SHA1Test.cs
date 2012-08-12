@@ -28,7 +28,8 @@ namespace Crimson.Test.Base {
 		private string input1 = "abc";
 		private string input2 = "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq";
 	
-		public void FIPS186_Test1 (SHA1 hash) 
+		[Test]
+		public void FIPS186_Test1 () 
 		{
 			string className = hash.ToString ();
 			byte[] result = { 0xa9, 0x99, 0x3e, 0x36, 0x47, 0x06, 0x81, 0x6a, 0xba, 0x3e, 0x25, 0x71, 0x78, 0x50, 0xc2, 0x6c, 0x9c, 0xd0, 0xd8, 0x9d };
@@ -42,7 +43,8 @@ namespace Crimson.Test.Base {
 			FIPS186_e (testName, hash, input, result);
 		}
 	
-		public void FIPS186_Test2 (SHA1 hash) 
+		[Test]
+		public void FIPS186_Test2 () 
 		{
 			string className = hash.ToString ();
 			byte[] result = { 0x84, 0x98, 0x3e, 0x44, 0x1c, 0x3b, 0xd2, 0x6e, 0xba, 0xae, 0x4a, 0xa1, 0xf9, 0x51, 0x29, 0xe5, 0xe5, 0x46, 0x70, 0xf1 };
@@ -56,7 +58,8 @@ namespace Crimson.Test.Base {
 			FIPS186_e (testName, hash, input, result);
 		}
 	
-		public void FIPS186_Test3 (SHA1 hash) 
+		[Test]
+		public void FIPS186_Test3 () 
 		{
 			string className = hash.ToString ();
 			byte[] result = { 0x34, 0xaa, 0x97, 0x3c, 0xd4, 0xc4, 0xda, 0xa4, 0xf6, 0x1e, 0xeb, 0x2b, 0xdb, 0xad, 0x27, 0x31, 0x65, 0x34, 0x01, 0x6f };
@@ -72,7 +75,7 @@ namespace Crimson.Test.Base {
 			FIPS186_e (testName, hash, input, result);
 		}
 	
-		public void FIPS186_a (string testName, SHA1 hash, byte[] input, byte[] result) 
+		public void FIPS186_a (string testName, HashAlgorithm hash, byte[] input, byte[] result) 
 		{
 			byte[] output = hash.ComputeHash (input); 
 			Assert.AreEqual (result, output, testName + ".a.1");
@@ -81,7 +84,7 @@ namespace Crimson.Test.Base {
 			hash.Initialize ();
 		}
 	
-		public void FIPS186_b (string testName, SHA1 hash, byte[] input, byte[] result) 
+		public void FIPS186_b (string testName, HashAlgorithm hash, byte[] input, byte[] result) 
 		{
 			byte[] output = hash.ComputeHash (input, 0, input.Length); 
 			Assert.AreEqual (result, output, testName + ".b.1");
@@ -90,7 +93,7 @@ namespace Crimson.Test.Base {
 			hash.Initialize ();
 		}
 	
-		public void FIPS186_c (string testName, SHA1 hash, byte[] input, byte[] result) 
+		public void FIPS186_c (string testName, HashAlgorithm hash, byte[] input, byte[] result) 
 		{
 			MemoryStream ms = new MemoryStream (input);
 			byte[] output = hash.ComputeHash (ms); 
@@ -100,7 +103,7 @@ namespace Crimson.Test.Base {
 			hash.Initialize ();
 		}
 	
-		public void FIPS186_d (string testName, SHA1 hash, byte[] input, byte[] result) 
+		public void FIPS186_d (string testName, HashAlgorithm hash, byte[] input, byte[] result) 
 		{
 			hash.TransformFinalBlock (input, 0, input.Length);
 			// LAMESPEC or FIXME: TransformFinalBlock doesn't return HashValue !
@@ -110,7 +113,7 @@ namespace Crimson.Test.Base {
 			hash.Initialize ();
 		}
 	
-		public void FIPS186_e (string testName, SHA1 hash, byte[] input, byte[] result) 
+		public void FIPS186_e (string testName, HashAlgorithm hash, byte[] input, byte[] result) 
 		{
 			byte[] copy = new byte [input.Length];
 			for (int i=0; i < input.Length - 1; i++)
