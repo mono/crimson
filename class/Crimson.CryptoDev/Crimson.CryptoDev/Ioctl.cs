@@ -70,10 +70,15 @@ namespace Crimson.CryptoDev {
 #if TEST
 		static unsafe void Main ()
 		{
-			// IOWR('c', 102, struct session_op)
-			Console.WriteLine ("CIOCGSESSION = {0}", IOWR ('c', 102, sizeof (Session)));
+			Console.WriteLine ("// CryptoDev");
+			Console.WriteLine ("CIOCGSESSION = {0}", IOWR ('c', 102, sizeof (CryptoDevSession)));
 			Console.WriteLine ("CIOCFSESSION = {0}", IOW ('c', 103, sizeof (System.UInt32)));
 			Console.WriteLine ("CIOCCRYPT = {0}", IOWR ('c', 104, sizeof (Crypt)));
+
+			Console.WriteLine ("// OCF");
+ 			Console.WriteLine ("CIOCGSESSION = {0}", IOWR ('c', 106, sizeof (Session)));
+ 			Console.WriteLine ("CIOCFSESSION = {0}", IOW ('c', 102, sizeof (System.UInt32)));
+ 			Console.WriteLine ("CIOCCRYPT = {0}", IOWR ('c', 103, sizeof (Crypt)));
 		}
 #endif
 	}

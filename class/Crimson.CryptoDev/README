@@ -1,16 +1,17 @@
 This assembly goal is to provide a managed wrapper on to /dev/crypto
-also known as `cryptodev`.
+as provided by either `cryptodev` [1] or OCF [2].
 
 References:
-* http://home.gna.org/cryptodev-linux/
+[1] http://home.gna.org/cryptodev-linux/
+[2] http://ocf-linux.sourceforge.net
 
 
-CryptoDev Availability
+/dev/crypto Availability
 ----------------------
 
 Most Linux distributions do not ship /dev/crypto so you'll have to:
 
-1. build it yourself (from the above link);
+1. build it yourself (from one of the above links);
 
 2. install the driver, e.g.
 
@@ -31,8 +32,8 @@ You can verify that everything works, if nunit is available, by doing
 'make run-test'
 
 
-mv_cesa specific notes
-----------------------
+cryptodev/mv_cesa specific notes
+--------------------------------
 
 Hardware have limited internal buffers to work on. The drivers should 
 make this limit invisible to callers. This is not (always) the case.

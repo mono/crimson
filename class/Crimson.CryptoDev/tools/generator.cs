@@ -143,7 +143,7 @@ namespace Crimson.Security.Cryptography {
 		
 		static {0}Kernel()
 		{
-			string blockSize = Environment.GetEnvironmentVariable (""CRIMSON_{0}_BUFFER_BLOCK_SIZE"");
+			string blockSize = Environment.GetEnvironmentVariable (""CRIMSON_{4}_BUFFER_BLOCK_SIZE"");
 			BufferBlockSize = blockSize == null ? Int32.MaxValue : Convert.ToInt32 (blockSize);
 		}
 
@@ -178,7 +178,9 @@ namespace Crimson.Security.Cryptography {
 				case CipherMode.CBC:
 					return new CryptoDevTransform (this, Cipher.{3}, false, rgbKey, rgbIV, BufferBlockSize);
 				case CipherMode.ECB:
-					return new CryptoDevTransform (this, Cipher.{2}, false, rgbKey, rgbIV, BufferBlockSize);
+					if (Helper.Mode == KernelMode.CryptoDev)
+						return new CryptoDevTransform (this, Cipher.{2}, false, rgbKey, rgbIV, BufferBlockSize);
+					break;
 				}
 			}
 			catch (CryptographicException) {
@@ -196,7 +198,9 @@ namespace Crimson.Security.Cryptography {
 				case CipherMode.CBC:
 					return new CryptoDevTransform (this, Cipher.{3}, true, rgbKey, rgbIV, BufferBlockSize);
 				case CipherMode.ECB:
-					return new CryptoDevTransform (this, Cipher.{2}, true, rgbKey, rgbIV, BufferBlockSize);
+					if (Helper.Mode == KernelMode.CryptoDev)
+						return new CryptoDevTransform (this, Cipher.{2}, true, rgbKey, rgbIV, BufferBlockSize);
+					break;
 				}
 			}
 			catch (CryptographicException) {

@@ -30,20 +30,135 @@ using System.Security.Cryptography;
 
 namespace Crimson.CryptoDev {
 
+	public enum KernelMode {
+		Unknown = -1,
+		NotAvailable = 0,
+		CryptoDev = 1,
+		Ocf = 2
+	}
+	
 	// hide platform differences, e.g. 32/64 bits
-	static unsafe class Helper {
-
+	public static unsafe class Helper {
+		
 		// shared file descriptor
-		static int fildes = Helper.open ("/dev/crypto", 2 /* O_RDWR */);
-
-		static public bool CryptoDevAvailable {
-			get { return (fildes != -1); }
+		static int fildes = -1;
+		static KernelMode mode;
+		
+		static Helper ()
+		{
+			try {
+				fildes = Helper.open ("/dev/crypto", 2 /* O_RDWR */);
+				mode = (fildes == -1) ? KernelMode.NotAvailable : KernelMode.Unknown;
+			}
+			catch (DllNotFoundException) {
+				// libc is not available on Windows (e.g. MS.NET) and we
+				// do not want to crash with a TypeInitializationException
+				mode = KernelMode.NotAvailable;
+			}
+		}
+		
+		static public KernelMode Mode { 
+			get { return mode; }
+			private set {
+				switch (value) {
+				case KernelMode.CryptoDev:
+					CIOCGSESSION = CD_CIOCGSESSION;
+					CIOCFSESSION = CD_CIOCFSESSION;
+					CIOCCRYPT = CD_CIOCCRYPT;
+					break;
+				case KernelMode.Ocf:
+					CIOCGSESSION = OCF_CIOCGSESSION;
+					CIOCFSESSION = OCF_CIOCFSESSION;
+					CIOCCRYPT = OCF_CIOCCRYPT;
+					break;
+				default:
+					throw new InvalidOperationException ();
+				}
+				mode = value;
+			}
+		}
+		
+		static byte[] null_key = new byte [32]; // 128 bit key
+		
+		// cryptodev can be available but may not support the algorithm
+		// we wish to use (and we must fallback to another implementation)
+		static public bool IsCryptoDev (Cipher algo)
+		{
+			if (Mode == KernelMode.NotAvailable)
+				return false;
+			return Is (algo, KernelMode.CryptoDev);
 		}
 
-		// size will vary for 32/64 bits
-		static ulong CIOCGSESSION = Ioctl.IOWR ('c', 102, sizeof (Session));
-		static ulong CIOCFSESSION = Ioctl.IOW ('c', 103, sizeof (UInt32));
-		static ulong CIOCCRYPT = Ioctl.IOWR ('c', 104, sizeof (Crypt));
+		static public bool IsOcf (Cipher algo)
+		{
+			if (Mode == KernelMode.NotAvailable)
+				return false;
+			return Is (algo, KernelMode.Ocf);
+		}
+		
+		// note: calling IsAvailable ensure 'mode' is set and makes 
+		// every implementations works properly
+		static public bool IsAvailable (Cipher algo)
+		{
+			if (Mode == KernelMode.NotAvailable)
+				return false;
+			if (Is (algo, KernelMode.CryptoDev))
+				return true;
+			return Is (algo, KernelMode.Ocf);
+		}
+		
+		static bool Is (Cipher algo, KernelMode mode)
+		{
+			Session session = new Session ();
+			switch (algo) {
+			case Cipher.AES_CBC:
+			case Cipher.AES_ECB:
+				session.cipher = algo;
+				session.keylen = 32;
+				fixed (byte* k = &null_key[0])
+					session.key = (IntPtr)k;
+				break;
+			case Cipher.SHA1:
+				session.mac = algo;
+				break;
+			// accept both SHA256 and SHA2_256 and use the correct one
+			case Cipher.SHA256:
+			case Cipher.SHA2_256:
+				if (mode == KernelMode.Ocf)
+					session.mac = Cipher.SHA2_256;
+				else
+					session.mac = Cipher.SHA256;
+				break;
+			default:
+				return false;
+			}
+
+			ulong ciocgsession = mode == KernelMode.CryptoDev ? CD_CIOCGSESSION : OCF_CIOCGSESSION;
+			bool result;
+			if (IntPtr.Size == 4)
+				result = ioctl32 (fildes, (int) ciocgsession, ref session) == 0;
+			else
+				result = ioctl64 (fildes, ciocgsession, ref session) == 0;
+			
+			if (result)
+				Mode = mode;
+			return result;
+		}
+		
+		// values varies for cryptodev and OCF and for 32/64 bits
+		static ulong CIOCGSESSION = 0;
+		static ulong CIOCFSESSION = 0;
+		static ulong CIOCCRYPT = 0;
+		
+		// cryptodev constants : size will vary for 32/64 bits
+		static ulong CD_CIOCGSESSION = Ioctl.IOWR ('c', 102, sizeof (CryptoDevSession));
+		static ulong CD_CIOCFSESSION = Ioctl.IOW ('c', 103, sizeof (UInt32));
+		static ulong CD_CIOCCRYPT = Ioctl.IOWR ('c', 104, sizeof (Crypt));
+		
+		// OCF constants : size will vary for 32/64 bits
+		static ulong OCF_CIOCGSESSION = Ioctl.IOWR ('c', 106, sizeof (Session));
+		static ulong OCF_CIOCFSESSION = Ioctl.IOW ('c', 102, sizeof (UInt32));
+		static ulong OCF_CIOCCRYPT = Ioctl.IOWR ('c', 103, sizeof (Crypt));
 
 		[DllImport ("libc", SetLastError=true, EntryPoint="open")]
 		static public extern int open (string path, int oflag);
@@ -58,7 +173,7 @@ namespace Crimson.CryptoDev {
 		[DllImport ("libc", SetLastError=true, EntryPoint="ioctl")]
 		static extern int ioctl64 (int fdc, ulong request, ref Session session);
 
-		static public int SessionOp (ref Session session)
+		static internal int SessionOp (ref Session session)
 		{
 			if (IntPtr.Size == 4)
 				return ioctl32 (fildes, (int) CIOCGSESSION, ref session);
@@ -71,7 +186,7 @@ namespace Crimson.CryptoDev {
 		[DllImport ("libc", SetLastError=true, EntryPoint="ioctl")]
 		static extern int ioctl64 (int fdc, ulong request, ref UInt32 session);
 
-		static public int CloseSession (ref UInt32 session)
+		static internal int CloseSession (ref UInt32 session)
 		{
 			int result = -1;
 			if (IntPtr.Size == 4)
@@ -90,7 +205,7 @@ namespace Crimson.CryptoDev {
 		[DllImport ("libc", SetLastError=true, EntryPoint="ioctl")]
 		static extern int ioctl64 (int fd, ulong request, ref Crypt crypt);
 
-		static public int CryptOp (ref Crypt crypt)
+		static internal int CryptOp (ref Crypt crypt)
 		{
 			if (IntPtr.Size == 4)
 				return ioctl32 (fildes, (int) CIOCCRYPT, ref crypt);

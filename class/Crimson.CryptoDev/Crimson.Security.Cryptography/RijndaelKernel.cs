@@ -83,7 +83,9 @@ namespace Crimson.Security.Cryptography {
 					case CipherMode.CBC:
 						return new CryptoDevTransform (this, Cipher.AES_CBC, false, rgbKey, rgbIV, BufferBlockSize);
 					case CipherMode.ECB:
-						return new CryptoDevTransform (this, Cipher.AES_ECB, false, rgbKey, rgbIV, BufferBlockSize);
+						if (Helper.Mode == KernelMode.CryptoDev)
+							return new CryptoDevTransform (this, Cipher.AES_ECB, false, rgbKey, rgbIV, BufferBlockSize);
+						break;
 					}
 				}
 			}
@@ -103,7 +105,9 @@ namespace Crimson.Security.Cryptography {
 					case CipherMode.CBC:
 						return new CryptoDevTransform (this, Cipher.AES_CBC, true, rgbKey, rgbIV, BufferBlockSize);
 					case CipherMode.ECB:
-						return new CryptoDevTransform (this, Cipher.AES_ECB, true, rgbKey, rgbIV, BufferBlockSize);
+						if (Helper.Mode == KernelMode.CryptoDev)
+							return new CryptoDevTransform (this, Cipher.AES_ECB, true, rgbKey, rgbIV, BufferBlockSize);
+						break;
 					}
 				}
 			}

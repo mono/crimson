@@ -33,16 +33,18 @@ namespace Crimson.CryptoDev {
 	// from cryptodev.h
 
 	// CRYPTO_*
-	enum Cipher : uint {
-		SHA1 = 14,
-		SHA256 = 103,
+	public enum Cipher : uint {
+		SHA1 = 14,		// both cryptodev and OCF
+		SHA256 = 103,		// cryptodev
+		SHA2_256 = 22,		// OCF
 		// ciphers
 		AES_CBC = 11,
-		AES_ECB = 23
+		AES_ECB = 23		// ECB not supported with OCF
 	}
 
 	// session_op
-	struct Session {
+	// only important to compute it's size at runtime
+	struct CryptoDevSession {
 		public Cipher	cipher;
 		public Cipher	mac;
 		public uint	keylen;
@@ -59,19 +61,44 @@ namespace Crimson.CryptoDev {
 #endif
 	}
 
+	// session_op
+	struct Session {
+		public Cipher	cipher;
+		public Cipher	mac;
+		public uint	keylen;
+		public IntPtr	key;		// 32/64 bits size diff
+		public uint	mackeylen;
+		public IntPtr	mackey;		// 32/64 bits size diff
+		public uint	ses;
+		public uint	crid;
+		public uint	pad1;
+		public uint	pad2;
+		public uint	pad3;
+		public uint	pad4;
+#if DEBUG
+		public override string ToString ()
+		{
+			return String.Format ("{0} {1} {2} {3} {4} {5} {6} {7}",
+				cipher, mac, keylen, key, mackeylen, mackey, ses, crid);
+		}
+#endif
+	}
+	
 	// COP_*
 	enum CryptoOperation : ushort {
 		Encrypt,	// 0
 		Decrypt		// 1
 	}
+	// note: OCF use CRYPTO_OP_DECRYPT 0 and CRYPTO_OP_ENCRYPT 1
 
 	// COP_FLAG_*
 	[Flags]
 	enum CryptoFlags : ushort {
 		None = 0,
-		Update = 1,
-		Final = 2,
-		WriteIv = 4
+		Update = 1,	// cryptodev only
+		Final = 2,	// cryptodev only
+		WriteIv = 4,	// cryptodev only
+		Batch = 8	// OCF only
 	}
 
 	// crypt_op

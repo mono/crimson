@@ -36,8 +36,8 @@ namespace Crimson.CryptoDev {
 
 		public HashHelper (Cipher algo)
 		{
-			if (!Helper.CryptoDevAvailable)
-				throw new CryptographicException ("Cannot access /dev/crypto");
+			if (!Helper.IsAvailable (algo))
+				throw new CryptographicException (String.Format ("{0} not available from /dev/crypto", algo));
 
 			// linux does not requires cloning the file descriptor with CRIOGET
 			Session sess = new Session ();

@@ -56,8 +56,8 @@ namespace Crimson.CryptoDev {
 
 		public CryptoDevTransform (SymmetricAlgorithm algo, Cipher cipher, bool encryption, byte[] rgbKey, byte[] rgbIV, int bufferBlockSize) 
 		{
-			if (!Helper.CryptoDevAvailable)
-				throw new CryptographicException ("Cannot access /dev/crypto");
+			if (!Helper.IsAvailable (cipher))
+				throw new CryptographicException (String.Format ("{0} not available from /dev/crypto", algo));
 
 			if (rgbKey == null)
 				throw new CryptographicException ("Invalid (null) key");
@@ -91,6 +91,10 @@ namespace Crimson.CryptoDev {
 
 			context.ses = sess.ses;
 			context.op = encryption ? CryptoOperation.Encrypt : CryptoOperation.Decrypt;
+			// CryptoOperation constants differs in OCF (0 is None, ...)
+			if (Helper.Mode == KernelMode.Ocf)
+				context.op++;
+			
 			if (algo.Mode != CipherMode.ECB) {
 				iv = rgbIV;
 				save_iv = new byte [BlockSizeByte];
