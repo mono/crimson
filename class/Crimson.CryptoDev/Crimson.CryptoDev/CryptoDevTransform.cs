@@ -330,10 +330,13 @@ namespace Crimson.CryptoDev {
 			}
 
 			byte[] res = new byte [total];
+			int outputOffset = 0;
 
  			// process all blocks except the last (final) block
-			int outputOffset = InternalTransformBlock (inputBuffer, inputOffset, total - BlockSizeByte, res, 0);
-			inputOffset += outputOffset;
+			if (total > BlockSizeByte) {
+				outputOffset = InternalTransformBlock (inputBuffer, inputOffset, total - BlockSizeByte, res, 0);
+				inputOffset += outputOffset;
+			}
 
 			// now we only have a single last block to encrypt
 			byte pad = (byte) (BlockSizeByte - rem);
@@ -378,8 +381,10 @@ namespace Crimson.CryptoDev {
 				total += BlockSizeByte;
 
 			byte[] res = new byte [total];
+			int outputOffset = 0;
 
-			int outputOffset = InternalTransformBlock (inputBuffer, inputOffset, inputCount, res, 0);
+			if (inputCount > 0)
+				outputOffset = InternalTransformBlock (inputBuffer, inputOffset, inputCount, res, 0);
 
 			if (lastBlock) {
 				Transform (workBuff, 0, res, outputOffset, BlockSizeByte);
