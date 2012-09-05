@@ -1,0 +1,31 @@
+Crimson.Selector
+
+This is an helper assembly that can be used to move the cryptographic
+implementation selection logic outside of your application.
+
+This is very similar to what CryptoConfig does [1] except that it allows
+to add additional (code) logic in the implementation selection instead 
+of relying only on (global/machine) configuration files.
+
+This additional logic also means it's meant to be customized to fit your
+specific needs - i.e. the current code shows how (for cryptodev) this 
+can be done.
+
+
+A basic case would be:
+
+* you do not want to load X if you're running on Y operating system -
+because it might not load (missing dependency), it will take extra time,
+memory...
+
+
+A more complex case is like the built-in one:
+
+* Crimson.CryptoDev.dll will work on some [2] Unix (only) if the right
+kernel support is available and then only some algorithms will be 
+available. That's the kind of decision that's better out of the main
+application code.
+
+
+[1] In fact it will, by default, defer to CryptoConfig.
+[2] Only tested on Linux but should work on *BSD
