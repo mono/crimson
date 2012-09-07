@@ -1,5 +1,8 @@
 CSC=gmcs
 
+CSC_FLAGS= -optimize
+#CSC_FLAGS= -debug
+
 SOURCES = \
 	Crimson.CryptoDev/CryptoDev.cs			\
 	Crimson.CryptoDev/CryptoDevTransform.cs		\
@@ -27,7 +30,7 @@ $(GENERATED_SOURCES): tools/generator.exe
 	mono tools/generator.exe Crimson.Security.Cryptography
 
 Crimson.CryptoDev.dll: $(SOURCES) $(GENERATED_SOURCES)
-	$(CSC) -debug $(SOURCES) $(GENERATED_SOURCES) -t:library -unsafe -out:$@ -keyfile:../crimson.snk
+	$(CSC) $(CSC_FLAGS) $(SOURCES) $(GENERATED_SOURCES) -t:library -unsafe -out:$@ -keyfile:../crimson.snk
 
 torture.exe: Crimson.CryptoDev.dll tools/torture.cs
 	dmcs -debug tools/torture.cs -r:Crimson.CryptoDev.dll -out:torture.exe
