@@ -78,9 +78,14 @@ namespace Crimson.CryptoDev {
 					context.len = (uint) size;
 					context.src = (IntPtr) p;
 					context.flags = CryptoFlags.Update;
+					try {
+						if (Helper.CryptOp (ref context) < 0)
+							throw new CryptographicException (Marshal.GetLastWin32Error ());
+					}
+					finally {
+						context.src = IntPtr.Zero;
+					}
 				}
-				if (Helper.CryptOp (ref context) < 0)
-					throw new CryptographicException (Marshal.GetLastWin32Error ());
 				length -= size;
 				start += size;
 			}
@@ -93,11 +98,15 @@ namespace Crimson.CryptoDev {
 				context.len = 0;
 				context.src = IntPtr.Zero;
 				context.mac = (IntPtr) p;
+				try {
+					if (Helper.CryptOp (ref context) < 0)
+						throw new CryptographicException (Marshal.GetLastWin32Error ());
+				}
+				finally {
+					context.mac = IntPtr.Zero;
+				}
 			}
-			if (Helper.CryptOp (ref context) < 0)
-				throw new CryptographicException (Marshal.GetLastWin32Error ());
 
-			context.mac = IntPtr.Zero;
 			return digest;
 		}		
 	}

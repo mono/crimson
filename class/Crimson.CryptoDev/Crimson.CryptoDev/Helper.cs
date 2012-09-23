@@ -109,40 +109,42 @@ namespace Crimson.CryptoDev {
 		
 		static bool Is (Cipher algo, KernelMode mode)
 		{
-			Session session = new Session ();
-			switch (algo) {
-			case Cipher.AES_CBC:
-			case Cipher.AES_ECB:
-				session.cipher = algo;
-				session.keylen = 32;
-				fixed (byte* k = &null_key[0])
+			fixed (byte* k = &null_key[0])
+			{
+				Session session = new Session ();
+				switch (algo) {
+				case Cipher.AES_CBC:
+				case Cipher.AES_ECB:
+					session.cipher = algo;
+					session.keylen = 32;
 					session.key = (IntPtr)k;
-				break;
-			case Cipher.SHA1:
-				session.mac = algo;
-				break;
-			// accept both SHA256 and SHA2_256 and use the correct one
-			case Cipher.SHA256:
-			case Cipher.SHA2_256:
-				if (mode == KernelMode.Ocf)
-					session.mac = Cipher.SHA2_256;
-				else
-					session.mac = Cipher.SHA256;
-				break;
-			default:
-				return false;
-			}
+					break;
+				case Cipher.SHA1:
+					session.mac = algo;
+					break;
+				// accept both SHA256 and SHA2_256 and use the correct one
+				case Cipher.SHA256:
+				case Cipher.SHA2_256:
+					if (mode == KernelMode.Ocf)
+						session.mac = Cipher.SHA2_256;
+					else
+						session.mac = Cipher.SHA256;
+					break;
+				default:
+					return false;
+				}
 
-			ulong ciocgsession = mode == KernelMode.CryptoDev ? CD_CIOCGSESSION : OCF_CIOCGSESSION;
-			bool result;
-			if (IntPtr.Size == 4)
-				result = ioctl32 (fildes, (int) ciocgsession, ref session) == 0;
-			else
-				result = ioctl64 (fildes, ciocgsession, ref session) == 0;
+				ulong ciocgsession = mode == KernelMode.CryptoDev ? CD_CIOCGSESSION : OCF_CIOCGSESSION;
+				bool result;
+				if (IntPtr.Size == 4)
+					result = ioctl32 (fildes, (int) ciocgsession, ref session) == 0;
+				else
+					result = ioctl64 (fildes, ciocgsession, ref session) == 0;
 			
-			if (result)
-				Mode = mode;
-			return result;
+				if (result)
+					Mode = mode;
+				return result;
+			}
 		}
 		
 		// values varies for cryptodev and OCF and for 32/64 bits
