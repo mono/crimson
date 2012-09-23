@@ -83,11 +83,16 @@ namespace Crimson.CryptoDev {
 			Session sess = new Session ();
 			sess.cipher = cipher;
 			sess.keylen = (uint) rgbKey.Length;
-			fixed (byte* k = &rgbKey [0])
+			fixed (byte* k = &rgbKey [0]) {
 				sess.key = (IntPtr) k;
-
-			if (Helper.SessionOp (ref sess) < 0)
-				throw new CryptographicException (Marshal.GetLastWin32Error ());
+				try {
+					if (Helper.SessionOp (ref sess) < 0)
+						throw new CryptographicException (Marshal.GetLastWin32Error ());
+				}
+				finally {
+					sess.key = IntPtr.Zero;
+				}
+			}
 
 			context.ses = sess.ses;
 			context.op = encryption ? CryptoOperation.Encrypt : CryptoOperation.Decrypt;
@@ -98,8 +103,6 @@ namespace Crimson.CryptoDev {
 			if (algo.Mode != CipherMode.ECB) {
 				iv = rgbIV;
 				save_iv = new byte [BlockSizeByte];
-				fixed (byte* i = &iv [0])
-					context.iv = (IntPtr) i;
 			}
 
 			// transform buffer
@@ -151,25 +154,31 @@ namespace Crimson.CryptoDev {
 		{
 			while (length > 0) {
 				int size = Math.Min (length, BufferBlockSize);
-				if (iv != null) {
-					fixed (byte *i = &iv [0])
-						context.iv = (IntPtr) i;
-
-					if (!encrypt) {
-						int ivOffset = inputOffset + size - BlockSizeByte;
-						Buffer.BlockCopy (input, ivOffset, save_iv, 0, BlockSizeByte);
-					}
-				}
-
+				fixed (byte *v = iv)
 				fixed (byte *i = &input [inputOffset])
 				fixed (byte *o = &output [outputOffset]) {
+					if (iv != null) {
+						context.iv = (IntPtr) v;
+
+						if (!encrypt) {
+							int ivOffset = inputOffset + size - BlockSizeByte;
+							Buffer.BlockCopy (input, ivOffset, save_iv, 0, BlockSizeByte);
+						}
+					}
+
 					context.len = (uint) size;
 					context.src = (IntPtr) i;
 					context.dst = (IntPtr) o;
+					try {
+						if (Helper.CryptOp (ref context) < 0)
+							throw new CryptographicException (Marshal.GetLastWin32Error ());
+					}
+					finally {
+						context.iv = IntPtr.Zero;
+						context.src = IntPtr.Zero;
+						context.dst = IntPtr.Zero;
+					}
 				}
-
-				if (Helper.CryptOp (ref context) < 0)
-					throw new CryptographicException (Marshal.GetLastWin32Error ());
 
 				if (iv != null) {
 					if (encrypt)
