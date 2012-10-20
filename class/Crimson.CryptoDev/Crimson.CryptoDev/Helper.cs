@@ -25,6 +25,7 @@
 //
 
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 
@@ -106,11 +107,18 @@ namespace Crimson.CryptoDev {
 				return true;
 			return Is (algo, KernelMode.Ocf);
 		}
+
+		static HashSet<long> availability = new HashSet<long> ();
 		
 		static bool Is (Cipher algo, KernelMode mode)
 		{
-			fixed (byte* k = &null_key[0])
-			{
+			// asking the kernel for availability turns out to be very costly
+			long key = (((long) algo << 32) | (long) mode);
+			if (availability.Contains (key))
+				return true;
+
+			bool result = false;
+			fixed (byte* k = &null_key [0]) {
 				Session session = new Session ();
 				switch (algo) {
 				case Cipher.AES_CBC:
@@ -135,16 +143,16 @@ namespace Crimson.CryptoDev {
 				}
 
 				ulong ciocgsession = mode == KernelMode.CryptoDev ? CD_CIOCGSESSION : OCF_CIOCGSESSION;
-				bool result;
 				if (IntPtr.Size == 4)
 					result = ioctl32 (fildes, (int) ciocgsession, ref session) == 0;
 				else
 					result = ioctl64 (fildes, ciocgsession, ref session) == 0;
-			
-				if (result)
-					Mode = mode;
-				return result;
 			}
+			if (result) {
+				Mode = mode;
+				availability.Add (key);
+			}
+			return result;
 		}
 		
 		// values varies for cryptodev and OCF and for 32/64 bits
