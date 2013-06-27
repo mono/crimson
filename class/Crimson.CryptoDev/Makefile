@@ -11,6 +11,7 @@ SOURCES = \
 	Crimson.CryptoDev/Helper.cs			\
 	Crimson.Security.Cryptography/RijndaelKernel.cs	\
 	CryptoTools.cs 					\
+	AssemblyInfo.cs					\
 	../../common/Locale.cs
 
 all: Crimson.CryptoDev.dll
@@ -29,8 +30,27 @@ tools/generator.exe: tools/generator.cs
 $(GENERATED_SOURCES): tools/generator.exe
 	mono tools/generator.exe Crimson.Security.Cryptography
 
+AssemblyInfo.cs:
+	@ver='tarball'; \
+	if test -d $(CURDIR)/../../.git; then \
+	  cd $(CURDIR)/../..; \
+	  LANG=C; export LANG; \
+	  branch=`git branch | grep '^\*' | cut -d ' ' -f 2`; \
+	  version=`git log --no-color --first-parent -n1 --pretty=format:%h`; \
+	  if [ "$$branch" = '(no' ]; then \
+	    ver="$$version"; \
+	  else \
+	    ver="$$branch/$$version"; \
+	  fi; \
+	  cd $(CURDIR); \
+	fi; \
+	( \
+	  echo "using System.Reflection;"; \
+	  echo "[assembly:AssemblyInformationalVersionAttribute(\"$${ver}\")]"; \
+	) > $@
+
 Crimson.CryptoDev.dll: $(SOURCES) $(GENERATED_SOURCES)
-	$(CSC) $(CSC_FLAGS) $(SOURCES) $(GENERATED_SOURCES) -t:library -unsafe -out:$@ -keyfile:../crimson.snk
+	$(CSC) $(CSC_FLAGS) $^ -t:library -unsafe -out:$@ -keyfile:../crimson.snk
 
 torture.exe: Crimson.CryptoDev.dll tools/torture.cs
 	dmcs -debug tools/torture.cs -r:Crimson.CryptoDev.dll -out:torture.exe
@@ -41,7 +61,7 @@ torture: torture.exe
 clean:
 	rm -f torture.exe
 	rm -f tools/generator.exe
-	rm -f $(GENERATED_SOURCES) CryptoTools.cs
+	rm -f $(GENERATED_SOURCES) CryptoTools.cs AssemblyInfo.cs
 	rm -f *.dll*
 
 BASE_TESTS = \
