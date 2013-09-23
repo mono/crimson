@@ -44,7 +44,7 @@ namespace Crimson.CryptoDev {
 		// shared file descriptor
 		static int fildes = -1;
 		static KernelMode mode;
-		static Cipher sha256;
+		static Cipher? sha256;
 		
 		static Helper ()
 		{
@@ -133,13 +133,18 @@ namespace Crimson.CryptoDev {
 					break;
 				// accept both SHA256 and SHA2_256 and use the correct one
 				case Cipher.SHA256:
+				case Cipher.SHA256_NEW:
 				case Cipher.SHA2_256:
-					if (mode == KernelMode.Ocf)
-						session.mac = Cipher.SHA2_256;
-					else
-						session.mac = IsNewCryptoDev() ? Cipher.SHA256_NEW : Cipher.SHA256;
-					// save the result
-					sha256 = session.mac;
+					if (sha256.HasValue) {
+						session.mac = sha256.Value;
+					} else {
+						if (mode == KernelMode.Ocf)
+							session.mac = Cipher.SHA2_256;
+						else
+							session.mac = IsNewCryptoDev() ? Cipher.SHA256_NEW : Cipher.SHA256;
+
+						sha256 = session.mac;
+					}
 					break;
 				default:
 					return false;
@@ -206,8 +211,8 @@ namespace Crimson.CryptoDev {
 
 		static internal int SessionOp (ref Session session)
 		{
-			if (session.mac == Cipher.SHA256)
-				session.mac = sha256;
+			if (session.mac == Cipher.SHA256 || session.mac == Cipher.SHA2_256 || session.mac == Cipher.SHA256_NEW)
+				session.mac = sha256.Value;
 				
 			if (IntPtr.Size == 4)
 				return ioctl32 (fildes, (int) CIOCGSESSION, ref session);
