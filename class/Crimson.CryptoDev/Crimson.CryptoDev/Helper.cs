@@ -44,6 +44,7 @@ namespace Crimson.CryptoDev {
 		// shared file descriptor
 		static int fildes = -1;
 		static KernelMode mode;
+		static Cipher sha256;
 		
 		static Helper ()
 		{
@@ -118,8 +119,8 @@ namespace Crimson.CryptoDev {
 				return true;
 
 			bool result = false;
+			Session session = new Session ();
 			fixed (byte* k = &null_key [0]) {
-				Session session = new Session ();
 				switch (algo) {
 				case Cipher.AES_CBC:
 				case Cipher.AES_ECB:
@@ -136,7 +137,9 @@ namespace Crimson.CryptoDev {
 					if (mode == KernelMode.Ocf)
 						session.mac = Cipher.SHA2_256;
 					else
-						session.mac = Cipher.SHA256;
+						session.mac = IsNewCryptoDev() ? Cipher.SHA256_NEW : Cipher.SHA256;
+					// save the result
+					sha256 = session.mac;
 					break;
 				default:
 					return false;
@@ -149,12 +152,30 @@ namespace Crimson.CryptoDev {
 					result = ioctl64 (fildes, ciocgsession, ref session) == 0;
 			}
 			if (result) {
+				CloseSession(ref session.ses);
 				Mode = mode;
 				availability.Add (key);
 			}
 			return result;
 		}
 		
+		static bool IsNewCryptoDev ()
+		{
+			// check if this is a new crypto dev module by testing for SHA2_224_HMAC.
+			// see discussion here https://github.com/nmav/cryptodev-linux/commit/d87ab5584893d06a21fe7cbf6e052d6757f9aa91#diff-535166266eead3c57bed2059c5006818
+			Session session = new Session ();
+			session.mac = (Cipher)107; // CRYPTO_SHA2_224_HMAC
+			bool result;
+			if (IntPtr.Size == 4)
+				result = ioctl32 (fildes, (int)CD_CIOCGSESSION, ref session) == 0;
+			else
+				result = ioctl64 (fildes, CD_CIOCGSESSION, ref session) == 0;
+			if (result) {
+				CloseSession(ref session.ses);
+			}
+			return result;
+		}
+
 		// values varies for cryptodev and OCF and for 32/64 bits
 		static ulong CIOCGSESSION = 0;
 		static ulong CIOCFSESSION = 0;
@@ -185,6 +206,9 @@ namespace Crimson.CryptoDev {
 
 		static internal int SessionOp (ref Session session)
 		{
+			if (session.mac == Cipher.SHA256)
+				session.mac = sha256;
+				
 			if (IntPtr.Size == 4)
 				return ioctl32 (fildes, (int) CIOCGSESSION, ref session);
 			else

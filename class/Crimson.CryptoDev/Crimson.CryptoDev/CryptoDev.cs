@@ -36,6 +36,7 @@ namespace Crimson.CryptoDev {
 	public enum Cipher : uint {
 		SHA1 = 14,		// both cryptodev and OCF
 		SHA256 = 103,		// cryptodev
+		SHA256_NEW = 104,   // new cryptodev
 		SHA2_256 = 22,		// OCF
 		// ciphers
 		AES_CBC = 11,
