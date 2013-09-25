@@ -26,6 +26,7 @@
 
 using System;
 using System.IO;
+using Crimson.CryptoDev;
 
 using NUnit.Framework;
 
@@ -49,6 +50,15 @@ namespace Crimson.Test.CryptoDev {
 			catch {
 				Assert.Ignore ("Can't access /dev/crypto");
 				// fix by doing "sudo chmod 600 /dev/crypto"
+			}
+		}
+
+		static public void EnsureAvailability (Cipher cipher)
+		{
+			EnsureAvailability();
+
+			if (!Crimson.CryptoDev.Helper.IsAvailable (cipher)) {
+				Assert.Ignore (string.Format("{0} not available on this platform", cipher));
 			}
 		}
 	}

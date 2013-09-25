@@ -40,7 +40,7 @@ namespace Crimson.Test.CryptoDev {
 		[SetUp]
 		protected void SetUp () 
 		{
-			CryptoDevTest.EnsureAvailability ();
+			CryptoDevTest.EnsureAvailability (Crimson.CryptoDev.Cipher.AES_CBC);
 			algo = Create (); // shared
 		}
 
