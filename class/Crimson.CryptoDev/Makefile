@@ -51,7 +51,7 @@ AssemblyInfo.cs:
 	) > $@
 
 Crimson.CryptoDev.dll: $(SOURCES) $(GENERATED_SOURCES)
-	$(CSC) $(CSC_FLAGS) $^ -t:library -unsafe -debug -out:$@ -keyfile:../crimson.snk
+	$(CSC) $(CSC_FLAGS) $^ -t:library -unsafe -out:$@ -keyfile:../crimson.snk
 
 torture.exe: Crimson.CryptoDev.dll tools/torture.cs
 	dmcs -debug tools/torture.cs -r:Crimson.CryptoDev.dll -out:torture.exe

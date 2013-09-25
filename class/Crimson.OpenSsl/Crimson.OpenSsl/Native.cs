@@ -58,7 +58,8 @@ namespace Crimson.OpenSsl
 		public const int SSLEAY_DIR = 5;
 
 		[DllImport(Dllname, CallingConvention = CallingConvention.Cdecl)]
-		public extern static string SSLeay_version(int type);
+		[return : MarshalAs(UnmanagedType.LPStr)]
+		public extern static IntPtr SSLeay_version(int type);
 
         //
         // Digests

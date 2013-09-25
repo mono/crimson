@@ -79,7 +79,7 @@ namespace Crimson.Security.Cryptography {
 
         public override void Initialize()
         {
-            helper = new HashHelper(Native.EVP_sha1(), this.HashSize);
+            helper = new HashHelper(Native.EVP_{1}(), this.HashSize);
         }
 
         protected override void HashCore(byte[] data, int start, int length)
@@ -106,7 +106,7 @@ namespace Crimson.Security.Cryptography {
 		string filename = Path.Combine (OutputDirectory,
 			String.Format ("{0}OpenSsl.g.cs", name));
 		string content = template.Replace ("{0}", name).
-			Replace ("{1}", name.ToUpperInvariant ());
+			Replace ("{1}", name.ToLowerInvariant ());
 		File.WriteAllText (filename, content);
 	}
 
@@ -204,8 +204,8 @@ namespace Crimson.Security.Cryptography {
 
 		GenerateHash ("SHA1");		// CRYPTO_SHA1
 		GenerateHash ("SHA256");	// CRYPTO_SHA256
-		GenerateHash ("MD5");		// CRYPTO_MD5
 #if UNTESTED
+		GenerateHash ("MD5");		// CRYPTO_MD5
 		GenerateHash ("RIPEMD160");	// CRYPTO_RIPEMD160
 		GenerateHash ("SHA384");	// CRYPTO_SHA2_384
 		GenerateHash ("SHA512");	// CRYPTO_SHA2_512

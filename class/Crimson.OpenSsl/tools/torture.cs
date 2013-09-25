@@ -73,7 +73,7 @@ class Program {
 		int i = 0;
 		try {
 			for (; i < max; i++) {
-				using (SHA1 digest = new SHA1Kernel ()) {
+				using (SHA1 digest = new SHA1OpenSsl ()) {
 					if (!Compare (output, digest.ComputeHash (input)))
 						throw new Exception (name + " " + i.ToString ());
 				}
@@ -117,7 +117,7 @@ class Program {
 		int i = 0;
 		try {
 			for (; i < max; i++) {
-				using (SHA256 digest = new SHA256Kernel ()) {
+				using (SHA256 digest = new SHA256OpenSsl ()) {
 					if (!Compare (output, digest.ComputeHash (input)))
 						throw new Exception (name + " " + i.ToString ());
 				}
@@ -177,7 +177,7 @@ class Program {
 		int i = 0;
 		try {
 			for (; i < max; i++) {
-				using (Aes cipher = new AesKernel ()) {
+				using (Aes cipher = new AesOpenSsl ()) {
 					cipher.Mode = CipherMode.ECB;
 					cipher.KeySize = key.Length * 8;
 					cipher.Padding = PaddingMode.Zeros;

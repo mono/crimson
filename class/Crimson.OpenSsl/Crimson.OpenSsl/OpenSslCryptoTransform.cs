@@ -37,6 +37,8 @@ namespace Crimson.OpenSsl
         public OpenSslCryptoTransform(SymmetricAlgorithm algo, bool encrypt, byte[] rgbKey, byte[] rgbIV)
             : base(algo, encrypt, rgbKey, rgbIV)
         {
+			OpenSslUtil.EnsureAvailability ();
+
             this.context = Native.EVP_CIPHER_CTX_new();
 
             var cptr = this.GetCipher(algo.Mode, rgbKey.Length);

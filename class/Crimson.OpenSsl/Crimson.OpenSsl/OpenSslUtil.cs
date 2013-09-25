@@ -36,7 +36,7 @@ namespace Crimson.OpenSsl
 		{
 			try
 			{
-				Native.SSLeay_version(Native.SSLEAY_VERSION);
+				GetVersionInfo();
 			}
 			catch (DllNotFoundException)
 			{
@@ -46,9 +46,16 @@ namespace Crimson.OpenSsl
 			return true;
 		}
 
+		public static void EnsureAvailability()
+		{
+			if (!IsAvailable ()) {
+				throw new CryptographicException ("libcrypto was not found");
+			}
+		}
+
 		public static string GetVersionInfo()
 		{
-			return Native.SSLeay_version (Native.SSLEAY_VERSION);
+			return Marshal.PtrToStringUni(Native.SSLeay_version (Native.SSLEAY_VERSION));
 		}
 	}
 }

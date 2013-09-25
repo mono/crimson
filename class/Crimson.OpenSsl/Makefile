@@ -17,7 +17,6 @@ all: Crimson.OpenSsl.dll
 GENERATED_SOURCES = \
 	Crimson.Security.Cryptography/AesOpenSsl.g.cs	\
 	Crimson.Security.Cryptography/RijndaelOpenSsl.g.cs	\
-	Crimson.Security.Cryptography/MD5OpenSsl.g.cs	\
 	Crimson.Security.Cryptography/SHA1OpenSsl.g.cs	\
 	Crimson.Security.Cryptography/SHA256OpenSsl.g.cs
 
@@ -47,7 +46,7 @@ AssemblyInfo.cs:
 	) > $@
 
 Crimson.OpenSsl.dll: $(SOURCES) $(GENERATED_SOURCES)
-	$(CSC) $(CSC_FLAGS) $^ -t:library -debug -unsafe -out:$@ -keyfile:../crimson.snk
+	$(CSC) $(CSC_FLAGS) $^ -t:library -unsafe -out:$@ -keyfile:../crimson.snk
 
 torture.exe: Crimson.OpenSsl.dll tools/torture.cs
 	dmcs -debug tools/torture.cs -r:Crimson.OpenSsl.dll -out:torture.exe
@@ -56,7 +55,7 @@ torture: torture.exe
 	mono --debug torture.exe -v
 
 clean:
-	rm -f torture.exe
+	rm -f torture.exe*
 	rm -f tools/generator.exe
 	rm -f $(GENERATED_SOURCES) AssemblyInfo.cs
 	rm -f *.dll*
