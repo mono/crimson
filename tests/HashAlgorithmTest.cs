@@ -36,7 +36,7 @@ using System.Text;
 
 namespace Crimson.Test.Base {
 
-	public class HashAlgorithmTest {
+	public abstract class HashAlgorithmTest {
 	
 		protected HashAlgorithm hash;
 	
