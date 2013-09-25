@@ -1,0 +1,67 @@
+This assembly goal is to provide a managed wrapper on to /dev/crypto
+as provided by either `cryptodev` [1] or OCF [2].
+
+References:
+[1] http://home.gna.org/cryptodev-linux/
+[2] http://ocf-linux.sourceforge.net
+
+
+/dev/crypto Availability
+----------------------
+
+Most Linux distributions do not ship /dev/crypto so you'll have to:
+
+1. build it yourself (from one of the above links);
+
+2. install the driver, e.g.
+
+	sudo insmod /path/to/cryptodev.ko
+
+3. give read/write permissions to the device, e.g. for everyone do:
+
+	sudo chmod 666 /dev/crypto
+
+
+Building
+--------
+
+If a recent mono is available then 'make' should be enough to build
+the generator (creating the source files) and then build the assembly
+
+You can verify that everything works, if nunit is available, by doing
+'make run-test'
+
+
+cryptodev/mv_cesa specific notes
+--------------------------------
+
+Hardware have limited internal buffers to work on. The drivers should 
+make this limit invisible to callers. This is not (always) the case.
+
+Testing as show that the hardware limit is hit if we use more than:
+
+1920 bytes for SHA1
+1936 bytes for AES
+
+As such the code can be adapted to work with those limits. By default
+the implementations will use a limit of Int32.MaxValue but, if defined
+differently, will iterate large buffers based on a smaller limit (and
+workaround the driver limitation).
+
+Changing this limit is done using environment variables, e.g.
+
+CRIMSON_AES_BUFFER_BLOCK_SIZE=1936 make run-test
+
+will run the unit tests using a block size limited to 1936 bytes.
+While
+
+CRIMSON_SHA1_BUFFER_BLOCK_SIZE=1920 make run-test
+
+will run the unit tests with a block size limited to 1920 bytes.
+
+This way each algorithm limitation can be configured separately. Even
+if the limit is likely identical between many of them.
+
+Since having those limits potentially requires a lot more native/kernels
+calls, reducing overall performance, it should only be used if required.
+

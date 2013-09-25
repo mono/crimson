@@ -1,0 +1,5 @@
+*.dll*
+Crimson.Security.Cryptography/*.g.cs
+TestResult.xml
+AssemblyInfo.cs
+tools/generator.exe
