@@ -43,11 +43,12 @@ namespace Crimson.Common
 {
     public abstract class CryptoTransformBase : ICryptoTransform
     {
-        bool encrypt;
-        int BlockSizeByte;
         byte[] workBuff;
         bool lastBlock;
         PaddingMode padding;
+
+        protected bool encrypt;
+        protected int BlockSizeByte;
         protected byte[] iv;
 
         public CryptoTransformBase(SymmetricAlgorithm algo, bool encryption, byte[] rgbKey, byte[] rgbIV)

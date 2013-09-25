@@ -147,7 +147,7 @@ namespace Crimson.Test.OpenSsl {
         {
             Rijndael aes = this.GetAES();
             byte[] data = this.GetData(8);
-            byte[] encdata = this.Encrypt(aes, PaddingMode.None, data);
+            this.Encrypt(aes, PaddingMode.None, data);
         }
 
         [Test]
@@ -167,7 +167,7 @@ namespace Crimson.Test.OpenSsl {
         {
             Rijndael aes = this.GetAES();
             byte[] data = this.GetData(20);
-            byte[] encdata = this.Encrypt(aes, PaddingMode.None, data);
+            this.Encrypt(aes, PaddingMode.None, data);
         }
 
         [Test]

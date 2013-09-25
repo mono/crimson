@@ -4,3 +4,4 @@ CryptoTools.cs
 SymmetricTransform.cs
 TestResult.xml
 AssemblyInfo.cs
+tools/generator.exe

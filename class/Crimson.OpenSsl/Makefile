@@ -6,7 +6,8 @@ CSC_FLAGS= -optimize
 SOURCES = \
 	Crimson.OpenSsl/Native.cs			\
 	Crimson.OpenSsl/HashHelper.cs		\
-	Crimson.OpenSsl/OpenSslCryptoTransform.cs			\
+	Crimson.OpenSsl/OpenSslCryptoTransform.cs \
+	Crimson.OpenSsl/OpenSslUtil.cs \
 	AssemblyInfo.cs					\
 	../../common/Locale.cs \
 	../../common/CryptoTransformBase.cs
@@ -46,7 +47,7 @@ AssemblyInfo.cs:
 	) > $@
 
 Crimson.OpenSsl.dll: $(SOURCES) $(GENERATED_SOURCES)
-	$(CSC) $(CSC_FLAGS) $^ -t:library -unsafe -out:$@ -keyfile:../crimson.snk
+	$(CSC) $(CSC_FLAGS) $^ -t:library -debug -unsafe -out:$@ -keyfile:../crimson.snk
 
 torture.exe: Crimson.OpenSsl.dll tools/torture.cs
 	dmcs -debug tools/torture.cs -r:Crimson.OpenSsl.dll -out:torture.exe
@@ -68,14 +69,15 @@ BASE_TESTS = \
 	../../tests/SHA256Test.cs		\
 	../../tests/SymmetricAlgorithmTest.cs
 
-GENERATED_TESTS = \
+TESTS = \
 	Tests/AesOpenSslTests.cs		\
 	Tests/RijndaelOpenSslTests.cs	\
 	Tests/SHA1OpenSslTests.cs		\
 	Tests/SHA256OpenSslTests.cs	\
+	Tests/OpenSslTests.cs
 
-Crimson.OpenSsl.Tests.dll: $(BASE_TESTS) $(GENERATED_TESTS) Crimson.OpenSsl.dll
-	mcs -debug $(BASE_TESTS) $(GENERATED_TESTS) -t:library -out:$@ -r:Crimson.OpenSsl.dll -pkg:mono-nunit
+Crimson.OpenSsl.Tests.dll: $(BASE_TESTS) $(TESTS) Crimson.OpenSsl.dll
+	mcs -debug $(BASE_TESTS) $(TESTS) -t:library -out:$@ -r:Crimson.OpenSsl.dll -pkg:mono-nunit
 
 test: Crimson.OpenSsl.Tests.dll
 

@@ -47,6 +47,19 @@ namespace Crimson.OpenSsl
             return ret;
         }
 
+		//
+		// Version
+		//
+
+		public const int SSLEAY_VERSION = 0;
+		public const int SSLEAY_CFLAGS = 2;
+		public const int SSLEAY_BUILT_ON = 3;
+		public const int SSLEAY_PLATFORM = 4;
+		public const int SSLEAY_DIR = 5;
+
+		[DllImport(Dllname, CallingConvention = CallingConvention.Cdecl)]
+		public extern static string SSLeay_version(int type);
+
         //
         // Digests
         //

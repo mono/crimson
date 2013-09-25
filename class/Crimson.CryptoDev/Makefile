@@ -12,7 +12,8 @@ SOURCES = \
 	Crimson.Security.Cryptography/RijndaelKernel.cs	\
 	CryptoTools.cs 					\
 	AssemblyInfo.cs					\
-	../../common/Locale.cs
+	../../common/Locale.cs          \
+	../../common/CryptoTransformBase.cs
 
 all: Crimson.CryptoDev.dll
 
@@ -50,7 +51,7 @@ AssemblyInfo.cs:
 	) > $@
 
 Crimson.CryptoDev.dll: $(SOURCES) $(GENERATED_SOURCES)
-	$(CSC) $(CSC_FLAGS) $^ -t:library -unsafe -out:$@ -keyfile:../crimson.snk
+	$(CSC) $(CSC_FLAGS) $^ -t:library -unsafe -debug -out:$@ -keyfile:../crimson.snk
 
 torture.exe: Crimson.CryptoDev.dll tools/torture.cs
 	dmcs -debug tools/torture.cs -r:Crimson.CryptoDev.dll -out:torture.exe

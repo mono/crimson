@@ -27,7 +27,7 @@ namespace Crimson.OpenSsl
 {
     using System;
 
-    public sealed class HashHelper : IDisposable
+    internal sealed class HashHelper : IDisposable
     {
         private IntPtr context;
         private readonly int hashSize;

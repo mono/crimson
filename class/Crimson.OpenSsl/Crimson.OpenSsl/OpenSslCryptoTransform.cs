@@ -30,7 +30,7 @@ namespace Crimson.OpenSsl
     using System.Security.Cryptography;
     using Crimson.Common;
 
-    public unsafe class OpenSslCryptoTransform : CryptoTransformBase
+    internal unsafe class OpenSslCryptoTransform : CryptoTransformBase
     {
         private IntPtr context;
 
