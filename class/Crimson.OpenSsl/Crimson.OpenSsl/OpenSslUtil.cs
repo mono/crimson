@@ -55,7 +55,7 @@ namespace Crimson.OpenSsl
 
 		public static string GetVersionInfo()
 		{
-			return Marshal.PtrToStringUni(Native.SSLeay_version (Native.SSLEAY_VERSION));
+			return Marshal.PtrToStringAuto(Native.SSLeay_version (Native.SSLEAY_VERSION));
 		}
 	}
 }
