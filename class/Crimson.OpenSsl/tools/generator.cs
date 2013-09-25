@@ -202,6 +202,8 @@ namespace Crimson.Security.Cryptography {
 	{
 		OutputDirectory = args.Length == 0 ? "." : args [0];
 
+		System.IO.Directory.CreateDirectory (OutputDirectory);
+
 		GenerateHash ("SHA1");		// CRYPTO_SHA1
 		GenerateHash ("SHA256");	// CRYPTO_SHA256
 #if UNTESTED
