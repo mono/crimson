@@ -129,12 +129,20 @@ namespace Crimson.CryptoDev {
 					session.key = (IntPtr)k;
 					break;
 				case Cipher.SHA1:
+					// OCF requires a single buffer that include room for the digest at the end. Its not 
+					// compatible with how HashAlgorithm works.
+					if (mode == KernelMode.Ocf)
+						return false;
+
 					session.mac = algo;
 					break;
 				// accept both SHA256 and SHA2_256 and use the correct one
 				case Cipher.SHA256:
 				case Cipher.SHA256_NEW:
 				case Cipher.SHA2_256:
+					if (mode == KernelMode.Ocf)
+						return false;
+
 					if (sha256.HasValue) {
 						session.mac = sha256.Value;
 					} else {
@@ -151,13 +159,15 @@ namespace Crimson.CryptoDev {
 				}
 
 				ulong ciocgsession = mode == KernelMode.CryptoDev ? CD_CIOCGSESSION : OCF_CIOCGSESSION;
-				if (IntPtr.Size == 4)
-					result = ioctl32 (fildes, (int) ciocgsession, ref session) == 0;
-				else
+				if (IntPtr.Size == 4) {
+					result = ioctl32 (fildes, (int)ciocgsession, ref session) == 0;
+					ioctl32 (fildes, (int)CD_CIOCFSESSION, ref session);
+				} else {
 					result = ioctl64 (fildes, ciocgsession, ref session) == 0;
+					ioctl64 (fildes, CD_CIOCFSESSION, ref session);
+				}
 			}
 			if (result) {
-				CloseSession(ref session.ses);
 				Mode = mode;
 				availability.Add (key);
 			}
@@ -166,17 +176,18 @@ namespace Crimson.CryptoDev {
 		
 		static bool IsNewCryptoDev ()
 		{
+			bool result;
+
 			// check if this is a new crypto dev module by testing for SHA2_224_HMAC.
 			// see discussion here https://github.com/nmav/cryptodev-linux/commit/d87ab5584893d06a21fe7cbf6e052d6757f9aa91#diff-535166266eead3c57bed2059c5006818
 			Session session = new Session ();
 			session.mac = (Cipher)107; // CRYPTO_SHA2_224_HMAC
-			bool result;
-			if (IntPtr.Size == 4)
+			if (IntPtr.Size == 4) {
 				result = ioctl32 (fildes, (int)CD_CIOCGSESSION, ref session) == 0;
-			else
+				ioctl32 (fildes, (int)CD_CIOCFSESSION, ref session);
+			} else {
 				result = ioctl64 (fildes, CD_CIOCGSESSION, ref session) == 0;
-			if (result) {
-				CloseSession(ref session.ses);
+				ioctl64 (fildes, CD_CIOCFSESSION, ref session);
 			}
 			return result;
 		}
