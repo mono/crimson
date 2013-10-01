@@ -6,6 +6,11 @@ The following assemblies are available in Crimson:
 	algorithm implementations, either native or hardware accelerated.
 	Ref: http://home.gna.org/cryptodev-linux/
 
+* Crimson.OpenSsl.dll
+
+	This assembly provides a wrapper around libcrypto.
+	Ref: http://www.openssl.org/
+	
 * Crimson.MHash.dll
 
 	This assembly provides wrapper around the native hash implementations 

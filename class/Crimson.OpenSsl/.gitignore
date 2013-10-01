@@ -1,7 +1,6 @@
 *.dll*
 Crimson.Security.Cryptography/*.g.cs
-CryptoTools.cs
-SymmetricTransform.cs
 TestResult.xml
 AssemblyInfo.cs
 tools/generator.exe
+torture.exe*

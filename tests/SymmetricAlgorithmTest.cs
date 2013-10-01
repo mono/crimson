@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Crimson.Test.Base {
 
-	public class SymmetricAlgorithmTest {
+	public abstract class SymmetricAlgorithmTest {
 	
 		protected SymmetricAlgorithm algo;
 

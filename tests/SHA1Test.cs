@@ -21,7 +21,7 @@ namespace Crimson.Test.Base {
 // a.	FIPS PUB 180-1: Secure Hash Standard
 //	http://csrc.nist.gov/publications/fips/fips180-1/fip180-1.txt
 
-	public class SHA1Test : HashAlgorithmTest {
+	public abstract class SHA1Test : HashAlgorithmTest {
 	
 		// test vectors from NIST FIPS 186-2
 	

@@ -39,7 +39,7 @@ namespace Crimson.Test.CryptoDev {
 		[SetUp]
 		protected void SetUp () 
 		{
-			CryptoDevTest.EnsureAvailability ();
+			CryptoDevTest.EnsureAvailability (Crimson.CryptoDev.Cipher.SHA1);
 			hash = new SHA1Kernel ();
 		}
 	}
