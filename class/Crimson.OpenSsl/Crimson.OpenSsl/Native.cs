@@ -36,12 +36,10 @@ namespace Crimson.OpenSsl {
     internal static class Native {
         const string DllName = "libcrypto";
 
-        public static int ExpectSuccess (int ret) {
-            if (ret <= 0) {
+        public static void ExpectSuccess (bool ret) {
+            if (!ret) {
                 throw new CryptographicException ();
             }
-
-            return ret;
         }
 
         //
@@ -83,13 +81,16 @@ namespace Crimson.OpenSsl {
         private extern static void EVP_MD_CTX_destroy (IntPtr ctx);
 
         [DllImport (DllName, CallingConvention = CallingConvention.Cdecl, SetLastError = false)]
-        public extern static int EVP_DigestInit_ex (SafeDigestContextHandle ctx, SafeDigestHandle type, IntPtr impl);
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public extern static bool EVP_DigestInit_ex(SafeDigestContextHandle ctx, SafeDigestHandle type, IntPtr impl);
 
         [DllImport (DllName, CallingConvention = CallingConvention.Cdecl, SetLastError = false)]
-        public extern static int EVP_DigestUpdate (SafeDigestContextHandle ctx, IntPtr d, uint cnt);
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public extern static bool EVP_DigestUpdate(SafeDigestContextHandle ctx, IntPtr d, uint cnt);
 
         [DllImport (DllName, CallingConvention = CallingConvention.Cdecl, SetLastError = false)]
-        public extern static int EVP_DigestFinal_ex (SafeDigestContextHandle ctx, IntPtr md, out uint s);
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public extern static bool EVP_DigestFinal_ex(SafeDigestContextHandle ctx, IntPtr md, out uint s);
 
         internal sealed class SafeDigestHandle : SafeHandleZeroOrMinusOneIsInvalid {
             private SafeDigestHandle () :
@@ -153,16 +154,20 @@ namespace Crimson.OpenSsl {
         private extern static void EVP_CIPHER_CTX_free (IntPtr a);
 
         [DllImport (DllName, CallingConvention = CallingConvention.Cdecl, SetLastError = false)]
-        public extern static int EVP_CIPHER_CTX_set_key_length (SafeCipherContextHandle x, int keylen);
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public extern static bool EVP_CIPHER_CTX_set_key_length(SafeCipherContextHandle x, int keylen);
 
         [DllImport (DllName, CallingConvention = CallingConvention.Cdecl, SetLastError = false)]
-        public extern static int EVP_CIPHER_CTX_set_padding (SafeCipherContextHandle x, int padding);
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public extern static bool EVP_CIPHER_CTX_set_padding(SafeCipherContextHandle x, int padding);
 
         [DllImport (DllName, CallingConvention = CallingConvention.Cdecl, SetLastError = false)]
-        public extern static int EVP_CipherInit_ex (SafeCipherContextHandle ctx, SafeCipherHandle type, IntPtr impl, IntPtr key, IntPtr iv, CipherOperation enc);
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public extern static bool EVP_CipherInit_ex(SafeCipherContextHandle ctx, SafeCipherHandle type, IntPtr impl, IntPtr key, IntPtr iv, CipherOperation enc);
 
         [DllImport (DllName, CallingConvention = CallingConvention.Cdecl, SetLastError = false)]
-        public extern static int EVP_CipherUpdate (SafeCipherContextHandle ctx, IntPtr outb, out int outl, IntPtr inb, int inl);
+        [return: MarshalAs (UnmanagedType.Bool)]
+        public extern static bool EVP_CipherUpdate(SafeCipherContextHandle ctx, IntPtr outb, out int outl, IntPtr inb, int inl);
 
         internal sealed class SafeCipherHandle : SafeHandleZeroOrMinusOneIsInvalid {
             private SafeCipherHandle () :
