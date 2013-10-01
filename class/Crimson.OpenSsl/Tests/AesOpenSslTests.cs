@@ -23,22 +23,20 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
 using System;
 using System.Security.Cryptography;
-
 using Crimson.Security.Cryptography;
 using Crimson.Test.Base;
-
 using NUnit.Framework;
 
-namespace Crimson.Test.OpenSsl {
-
+namespace Crimson.Test.OpenSsl
+{
 	[TestFixture]
-	public class AesKernelTest : AesTest {
+	public class AesKernelTest : AesTest
+	{
 		
 		[SetUp]
-		protected void SetUp () 
+		protected void SetUp ()
 		{
 			algo = Create (); // shared
 		}

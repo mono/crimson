@@ -23,16 +23,15 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
 using System;
 using System.IO;
-
 using NUnit.Framework;
 using Crimson.OpenSsl;
 
-namespace Crimson.Test.OpenSsl {
-
-	static class CryptoDevTest {
+namespace Crimson.Test.OpenSsl
+{
+	static class CryptoDevTest
+	{
 		
 		static public void EnsureAvailability ()
 		{

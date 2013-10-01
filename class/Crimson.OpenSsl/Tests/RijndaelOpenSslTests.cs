@@ -23,74 +23,68 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
 using System;
 using System.Security.Cryptography;
-
 using Crimson.Security.Cryptography;
 using Crimson.Test.Base;
-
 using NUnit.Framework;
 
-namespace Crimson.Test.OpenSsl {
+namespace Crimson.Test.OpenSsl
+{
+	[TestFixture]
+	public class RijndaelOpenSslTests : RijndaelTest
+	{
+		[SetUp]
+		protected void SetUp ()
+		{
+			this.algo = this.Create (); // shared
+		}
 
-    [TestFixture]
-    public class RijndaelOpenSslTests : RijndaelTest
-    {
-        [SetUp]
-        protected void SetUp()
-        {
-            this.algo = this.Create(); // shared
-        }
+		protected override SymmetricAlgorithm Create ()
+		{
+			return new RijndaelOpenSsl ();
+		}
 
-        protected override SymmetricAlgorithm Create()
-        {
-            return new RijndaelOpenSsl();
-        }
+		static bool Compare (byte[] actual, byte[] expected)
+		{
+			if (actual == null)
+				return (expected == null);
+			if (expected == null)
+				return false;
+			if (actual.Length != expected.Length)
+				return false;
+			for (int i = 0; i < actual.Length; i++) {
+				if (actual [i] != expected [i])
+					return false;
+			}
+			return true;
+		}
 
-        static bool Compare(byte[] actual, byte[] expected)
-        {
-            if (actual == null)
-                return (expected == null);
-            if (expected == null)
-                return false;
-            if (actual.Length != expected.Length)
-                return false;
-            for (int i = 0; i < actual.Length; i++)
-            {
-                if (actual[i] != expected[i])
-                    return false;
-            }
-            return true;
-        }
+		[Test]
+		public void CbcIvBlock ()
+		{
+			byte[] key = this.algo.Key;
+			byte[] iv = this.algo.IV;
+			this.algo.Mode = CipherMode.CBC;
 
-        [Test]
-        public void CbcIvBlock()
-        {
-            byte[] key = this.algo.Key;
-            byte[] iv = this.algo.IV;
-            this.algo.Mode = CipherMode.CBC;
+			// 1952 = max mv_cesa + one block
+			for (int i = 16; i <= 1952; i += 16) {
+				byte[] data = new byte[i];
+				byte[] enc1 = this.algo.CreateEncryptor ().TransformFinalBlock (data, 0, data.Length);
+				byte[] enc2 = null;
+				using (Rijndael r = new RijndaelManaged()) {
+					r.Mode = CipherMode.CBC;
+					r.Key = key;
+					r.IV = iv;
+					enc2 = this.algo.CreateEncryptor ().TransformFinalBlock (data, 0, data.Length);
+				}
 
-            // 1952 = max mv_cesa + one block
-            for (int i = 16; i <= 1952; i += 16)
-            {
-                byte[] data = new byte[i];
-                byte[] enc1 = this.algo.CreateEncryptor().TransformFinalBlock(data, 0, data.Length);
-                byte[] enc2 = null;
-                using (Rijndael r = new RijndaelManaged())
-                {
-                    r.Mode = CipherMode.CBC;
-                    r.Key = key;
-                    r.IV = iv;
-                    enc2 = this.algo.CreateEncryptor().TransformFinalBlock(data, 0, data.Length);
-                }
+				if (!Compare (enc1, enc2))
+					Assert.Fail ("Data size = " + i);
+			}
+		}
 
-                if (!Compare(enc1, enc2))
-                    Assert.Fail("Data size = " + i);
-            }
-        }
-
-        private static byte[] key1 = { 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef };
+		private static byte[] key1 = { 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef };
         private static byte[] key2 = { 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef, 0x01 };
         private static byte[] key3 = { 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef };
 
