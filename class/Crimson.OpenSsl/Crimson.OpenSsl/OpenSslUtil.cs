@@ -24,38 +24,31 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace Crimson.OpenSsl
-{
+namespace Crimson.OpenSsl {
 	using System;
 	using System.Runtime.InteropServices;
 	using System.Security.Cryptography;
 
-	public class OpenSslUtil
-	{
-		public static bool IsAvailable()
-		{
-			try
-			{
+	public class OpenSslUtil {
+		public static bool IsAvailable () {
+			try {
 				GetVersionInfo();
 			}
-			catch (DllNotFoundException)
-			{
+			catch (DllNotFoundException) {
 				return false;
 			}
 			
 			return true;
 		}
 
-		public static void EnsureAvailability()
-		{
+		public static void EnsureAvailability () {
 			if (!IsAvailable ()) {
-				throw new CryptographicException ("libcrypto was not found");
+				throw new CryptographicException("libcrypto was not found");
 			}
 		}
 
-		public static string GetVersionInfo()
-		{
-			return Marshal.PtrToStringAuto(Native.SSLeay_version (Native.SSLEAY_VERSION));
+		public static string GetVersionInfo () {
+			return Native.SSLeay_version (Native.SSLeayVersionType.SSLEAY_VERSION);
 		}
 	}
 }
