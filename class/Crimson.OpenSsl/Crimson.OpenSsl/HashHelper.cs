@@ -26,6 +26,7 @@
 namespace Crimson.OpenSsl
 {
     using System;
+	using System.Security.Cryptography;
 
     internal sealed class HashHelper : IDisposable
     {
@@ -71,15 +72,25 @@ namespace Crimson.OpenSsl
 
         public unsafe byte[] Final()
         {
-            var digest = new byte[this.hashSize];
-            var len = (uint)digest.Length;
+			var digest = new byte[Native.EVP_MAX_MD_SIZE];
+            uint len;
 
             fixed (byte* p = &digest[0])
             {
-                Native.ExpectSuccess(Native.EVP_DigestFinal_ex(this.context, (IntPtr)p, ref len));
+                Native.ExpectSuccess(Native.EVP_DigestFinal_ex(this.context, (IntPtr)p, out len));
             }
 
-            return digest;
+			if (len != hashSize) {
+				throw new CryptographicException (string.Format("Mismatched hash length was expecting {0} but got {1}", this.hashSize, len));
+			}
+
+			if (len == digest.Length) {
+				return digest;
+			}
+
+			var result = new byte[this.hashSize];
+			Buffer.BlockCopy (digest, 0, result, 0, this.hashSize);
+            return result;
         }
     }
 }

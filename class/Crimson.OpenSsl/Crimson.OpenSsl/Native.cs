@@ -65,6 +65,8 @@ namespace Crimson.OpenSsl
         // Digests
         //
 
+		public const int EVP_MAX_MD_SIZE = 64;
+
         [DllImport(Dllname, CallingConvention = CallingConvention.Cdecl)]
         public extern static IntPtr EVP_md5();
 
@@ -87,7 +89,7 @@ namespace Crimson.OpenSsl
         public extern static int EVP_DigestUpdate(IntPtr ctx, IntPtr d, uint cnt);
 
         [DllImport(Dllname, CallingConvention = CallingConvention.Cdecl)]
-        public extern static int EVP_DigestFinal_ex(IntPtr ctx, IntPtr md, ref uint s);
+        public extern static int EVP_DigestFinal_ex(IntPtr ctx, IntPtr md, out uint s);
 
         //
         // Ciphers
@@ -115,7 +117,7 @@ namespace Crimson.OpenSsl
         public extern static IntPtr EVP_CIPHER_CTX_new();
 
         [DllImport(Dllname, CallingConvention = CallingConvention.Cdecl)]
-        public extern static int EVP_CIPHER_CTX_free(IntPtr a);
+        public extern static void EVP_CIPHER_CTX_free(IntPtr a);
 
         [DllImport(Dllname, CallingConvention = CallingConvention.Cdecl)]
         public extern static int EVP_CIPHER_CTX_set_key_length(IntPtr x, int keylen);
