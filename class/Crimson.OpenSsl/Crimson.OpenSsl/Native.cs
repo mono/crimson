@@ -56,8 +56,7 @@ namespace Crimson.OpenSsl {
         }
 
         [DllImport (DllName, CallingConvention = CallingConvention.Cdecl, SetLastError = false, CharSet = CharSet.Ansi)]
-        [return: MarshalAs (UnmanagedType.LPStr)]
-        public extern static string SSLeay_version (SSLeayVersionType type);
+        public extern static IntPtr SSLeay_version (SSLeayVersionType type);
 
         //
         // Digests
