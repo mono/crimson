@@ -1,8 +1,8 @@
 //
 // Author: 
-//	Sebastien Pouliot  <sebastien@gmail.com>
+//	Bassam Tabbara  <bassam@symform.com>
 // 
-// Copyright 2012 Symform Inc.
+// Copyright 2013 Symform Inc.
 // 
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -23,43 +23,35 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+namespace Crimson.OpenSsl
+{
+	using System;
+	using System.Runtime.InteropServices;
+	using System.Security.Cryptography;
 
-using System;
-using System.IO;
-using Crimson.CryptoDev;
-
-using NUnit.Framework;
-
-namespace Crimson.Test.CryptoDev {
-
-	static class CryptoDevTest {
-		
-		static public void EnsureAvailability ()
+	public class OpenSslUtil
+	{
+		public static bool IsAvailable ()
 		{
-			if (!File.Exists ("/dev/crypto")) {
-				Assert.Ignore ("Missing /dev/crypto");
-				// fix by doing "sudo insmod cryptodev.ko"
-				return;
-			}
-
 			try {
-				using (var fs = new FileStream ("/dev/crypto", 
-					FileMode.Open, FileAccess.Write, 
-					FileShare.ReadWrite));
+				GetVersionInfo ();
+			} catch (DllNotFoundException) {
+				return false;
 			}
-			catch {
-				Assert.Ignore ("Can't access /dev/crypto");
-				// fix by doing "sudo chmod 600 /dev/crypto"
+			
+			return true;
+		}
+
+		public static void EnsureAvailability ()
+		{
+			if (!IsAvailable ()) {
+				throw new CryptographicException ("libcrypto was not found");
 			}
 		}
 
-		static public void EnsureAvailability (Cipher cipher)
+		public static string GetVersionInfo ()
 		{
-			EnsureAvailability();
-
-			if (!Crimson.CryptoDev.Helper.IsAvailable (cipher)) {
-				Assert.Ignore (string.Format("{0} not available on this platform", cipher));
-			}
+			return Marshal.PtrToStringAnsi (Native.SSLeay_version (Native.SSLeayVersionType.SSLEAY_VERSION));
 		}
 	}
 }

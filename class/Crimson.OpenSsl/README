@@ -1,0 +1,19 @@
+This assembly goal is to provide a managed wrapper on top of libcrypto[1].
+
+References:
+[1] http://www.openssl.org/
+
+libcrypto Availability
+----------------------
+
+Most Linux distributions ship with openssl. 
+
+Building
+--------
+
+If a recent mono is available then 'make' should be enough to build
+the generator (creating the source files) and then build the assembly
+
+You can verify that everything works, if nunit is available, by doing
+'make run-test'
+

@@ -76,21 +76,11 @@ namespace Crimson.Security.Cryptography {
 
 		public static int BufferBlockSize { get; set; }
 
-		public {0}Kernel ()
-		{
-		}
-
-		~{0}Kernel ()
-		{
-			Dispose (false);
-		}
-
 		protected override void Dispose (bool disposing)
 		{
-			if (disposing && (helper != null)) {
+			if (disposing && helper != null) {
 				helper.Dispose ();
-				helper = null;
-				GC.SuppressFinalize (this);
+                helper = null;
 			}
 			base.Dispose (disposing);
 		}

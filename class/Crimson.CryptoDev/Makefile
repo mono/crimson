@@ -12,7 +12,8 @@ SOURCES = \
 	Crimson.Security.Cryptography/RijndaelKernel.cs	\
 	CryptoTools.cs 					\
 	AssemblyInfo.cs					\
-	../../common/Locale.cs
+	../../common/Locale.cs          \
+	../../common/CryptoTransformBase.cs
 
 all: Crimson.CryptoDev.dll
 

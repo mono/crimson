@@ -1,8 +1,8 @@
 //
 // Author: 
-//	Sebastien Pouliot  <sebastien@gmail.com>
+//	Bassam Tabbara  <bassam@symform.com>
 // 
-// Copyright 2012 Symform Inc.
+// Copyright 2013 Symform Inc.
 // 
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -23,42 +23,20 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
 using System;
 using System.IO;
-using Crimson.CryptoDev;
-
 using NUnit.Framework;
+using Crimson.OpenSsl;
 
-namespace Crimson.Test.CryptoDev {
-
-	static class CryptoDevTest {
+namespace Crimson.Test.OpenSsl
+{
+	static class CryptoDevTest
+	{
 		
 		static public void EnsureAvailability ()
 		{
-			if (!File.Exists ("/dev/crypto")) {
-				Assert.Ignore ("Missing /dev/crypto");
-				// fix by doing "sudo insmod cryptodev.ko"
-				return;
-			}
-
-			try {
-				using (var fs = new FileStream ("/dev/crypto", 
-					FileMode.Open, FileAccess.Write, 
-					FileShare.ReadWrite));
-			}
-			catch {
-				Assert.Ignore ("Can't access /dev/crypto");
-				// fix by doing "sudo chmod 600 /dev/crypto"
-			}
-		}
-
-		static public void EnsureAvailability (Cipher cipher)
-		{
-			EnsureAvailability();
-
-			if (!Crimson.CryptoDev.Helper.IsAvailable (cipher)) {
-				Assert.Ignore (string.Format("{0} not available on this platform", cipher));
+			if (!OpenSslUtil.IsAvailable ()) {
+				Assert.Ignore ("libcrypto not found.");
 			}
 		}
 	}
