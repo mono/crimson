@@ -23,11 +23,11 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
 using System;
 using System.IO;
 
-class Program {
+class Program
+{
 
 	static void GenerateHash (string name)
 	{
@@ -67,44 +67,44 @@ namespace Crimson.Security.Cryptography {
 
         private HashHelper helper;
 
-        protected override void Dispose(bool disposing)
+        protected override void Dispose (bool disposing)
         {
-            if (disposing && helper != null)
-            {
-                helper.Dispose();
+            if (disposing && helper != null) {
+                helper.Dispose ();
                 helper = null;
             }
-            base.Dispose(disposing);
+            base.Dispose (disposing);
         }
 
-        public override void Initialize()
+        public override void Initialize ()
         {
-            helper = new HashHelper(Native.EVP_{1}(), this.HashSize);
+			if (this.helper != null) {
+				this.helper.Dispose ();
+			}
+            helper = new HashHelper (Native.EVP_{1} (), this.HashSize);
         }
 
-        protected override void HashCore(byte[] data, int start, int length)
+        protected override void HashCore (byte[] data, int start, int length)
         {
-            if (this.helper == null)
-            {
-                this.Initialize();
+            if (this.helper == null) {
+                this.Initialize ();
             }
 
-            helper.Update(data, start, length);
+            helper.Update (data, start, length);
         }
 
-        protected override byte[] HashFinal()
+        protected override byte[] HashFinal ()
         {
-            if (this.helper == null)
-            {
-                this.Initialize();
+            if (this.helper == null) {
+                this.Initialize ();
             }
 
-            return helper.Final();
+            return helper.Final ();
         }
 	}
 }";
 		string filename = Path.Combine (OutputDirectory,
-			String.Format ("{0}OpenSsl.g.cs", name));
+		                                String.Format ("{0}OpenSsl.g.cs", name));
 		string content = template.Replace ("{0}", name).
 			Replace ("{1}", name.ToLowerInvariant ());
 		File.WriteAllText (filename, content);
@@ -148,53 +148,49 @@ namespace Crimson.Security.Cryptography {
 		
         public static RandomNumberGenerator Rng = RandomNumberGenerator.Create();
 
-        public override void GenerateIV()
+        public override void GenerateIV ()
         {
             IVValue = new byte[BlockSizeValue >> 3];
             Rng.GetBytes(IVValue);
         }
 
-        public override void GenerateKey()
+        public override void GenerateKey ()
         {
             KeyValue = new byte[KeySizeValue >> 3];
             Rng.GetBytes(KeyValue);
         }
 
-        public override ICryptoTransform CreateDecryptor(byte[] rgbKey, byte[] rgbIV)
+        public override ICryptoTransform CreateDecryptor (byte[] rgbKey, byte[] rgbIV)
         {
             try
             {
-                if (BlockSize == 128)
-                {
-                    return new OpenSslCryptoTransform(this, false, rgbKey, rgbIV);
+                if (BlockSize == 128) {
+                    return new OpenSslCryptoTransform (this, false, rgbKey, rgbIV);
                 }
             }
-            catch (CryptographicException)
-            {
+            catch (CryptographicException) {
             }
 
-            using (var r = this.Fallback())
+            using (var r = this.Fallback ())
             {
-                return r.CreateDecryptor(rgbKey, rgbIV);
+                return r.CreateDecryptor (rgbKey, rgbIV);
             }
         }
 
-        public override ICryptoTransform CreateEncryptor(byte[] rgbKey, byte[] rgbIV)
+        public override ICryptoTransform CreateEncryptor (byte[] rgbKey, byte[] rgbIV)
         {
             try
             {
-                if (BlockSize == 128)
-                {
-                    return new OpenSslCryptoTransform(this, true, rgbKey, rgbIV);
+                if (BlockSize == 128) {
+                    return new OpenSslCryptoTransform (this, true, rgbKey, rgbIV);
                 }
             }
-            catch (CryptographicException)
-            {
+            catch (CryptographicException) {
             }
 
-            using (var r = this.Fallback())
+            using (var r = this.Fallback ())
             {
-                return r.CreateEncryptor(rgbKey, rgbIV);
+                return r.CreateEncryptor (rgbKey, rgbIV);
             }
         }
 
