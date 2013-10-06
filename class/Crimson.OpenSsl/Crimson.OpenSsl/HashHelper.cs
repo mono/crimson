@@ -51,6 +51,10 @@ namespace Crimson.OpenSsl
 
 		public unsafe void Update (byte[] data, int start, int length)
 		{
+			if (start + length > data.Length) {
+				throw new ArgumentOutOfRangeException ("data");
+			}
+
 			if (length == 0) {
 				return;
 			}
