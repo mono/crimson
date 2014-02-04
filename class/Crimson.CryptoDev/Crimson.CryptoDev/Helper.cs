@@ -44,6 +44,7 @@ namespace Crimson.CryptoDev {
 		// shared file descriptor
 		static int fildes = -1;
 		static KernelMode mode;
+		static Cipher? sha256;
 		
 		static Helper ()
 		{
@@ -118,8 +119,8 @@ namespace Crimson.CryptoDev {
 				return true;
 
 			bool result = false;
+			Session session = new Session ();
 			fixed (byte* k = &null_key [0]) {
-				Session session = new Session ();
 				switch (algo) {
 				case Cipher.AES_CBC:
 				case Cipher.AES_ECB:
@@ -128,25 +129,43 @@ namespace Crimson.CryptoDev {
 					session.key = (IntPtr)k;
 					break;
 				case Cipher.SHA1:
+					// OCF requires a single buffer that include room for the digest at the end. Its not 
+					// compatible with how HashAlgorithm works.
+					if (mode == KernelMode.Ocf)
+						return false;
+
 					session.mac = algo;
 					break;
 				// accept both SHA256 and SHA2_256 and use the correct one
 				case Cipher.SHA256:
+				case Cipher.SHA256_NEW:
 				case Cipher.SHA2_256:
 					if (mode == KernelMode.Ocf)
-						session.mac = Cipher.SHA2_256;
-					else
-						session.mac = Cipher.SHA256;
+						return false;
+
+					if (sha256.HasValue) {
+						session.mac = sha256.Value;
+					} else {
+						if (mode == KernelMode.Ocf)
+							session.mac = Cipher.SHA2_256;
+						else
+							session.mac = IsNewCryptoDev() ? Cipher.SHA256_NEW : Cipher.SHA256;
+
+						sha256 = session.mac;
+					}
 					break;
 				default:
 					return false;
 				}
 
 				ulong ciocgsession = mode == KernelMode.CryptoDev ? CD_CIOCGSESSION : OCF_CIOCGSESSION;
-				if (IntPtr.Size == 4)
-					result = ioctl32 (fildes, (int) ciocgsession, ref session) == 0;
-				else
+				if (IntPtr.Size == 4) {
+					result = ioctl32 (fildes, (int)ciocgsession, ref session) == 0;
+					ioctl32 (fildes, (int)CD_CIOCFSESSION, ref session);
+				} else {
 					result = ioctl64 (fildes, ciocgsession, ref session) == 0;
+					ioctl64 (fildes, CD_CIOCFSESSION, ref session);
+				}
 			}
 			if (result) {
 				Mode = mode;
@@ -155,6 +174,24 @@ namespace Crimson.CryptoDev {
 			return result;
 		}
 		
+		static bool IsNewCryptoDev ()
+		{
+			bool result;
+
+			// check if this is a new crypto dev module by testing for SHA2_224_HMAC.
+			// see discussion here https://github.com/nmav/cryptodev-linux/commit/d87ab5584893d06a21fe7cbf6e052d6757f9aa91#diff-535166266eead3c57bed2059c5006818
+			Session session = new Session ();
+			session.mac = (Cipher)107; // CRYPTO_SHA2_224_HMAC
+			if (IntPtr.Size == 4) {
+				result = ioctl32 (fildes, (int)CD_CIOCGSESSION, ref session) == 0;
+				ioctl32 (fildes, (int)CD_CIOCFSESSION, ref session);
+			} else {
+				result = ioctl64 (fildes, CD_CIOCGSESSION, ref session) == 0;
+				ioctl64 (fildes, CD_CIOCFSESSION, ref session);
+			}
+			return result;
+		}
+
 		// values varies for cryptodev and OCF and for 32/64 bits
 		static ulong CIOCGSESSION = 0;
 		static ulong CIOCFSESSION = 0;
@@ -185,6 +222,9 @@ namespace Crimson.CryptoDev {
 
 		static internal int SessionOp (ref Session session)
 		{
+			if (session.mac == Cipher.SHA256 || session.mac == Cipher.SHA2_256 || session.mac == Cipher.SHA256_NEW)
+				session.mac = sha256.Value;
+				
 			if (IntPtr.Size == 4)
 				return ioctl32 (fildes, (int) CIOCGSESSION, ref session);
 			else

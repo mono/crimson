@@ -18,7 +18,7 @@ SOURCES = \
 all: Crimson.CryptoDev.dll
 
 CryptoTools.cs:
-	wget https://raw.github.com/mono/mono/master/mcs/class/corlib/Mono.Security.Cryptography/CryptoTools.cs
+	wget https://raw.github.com/mono/mono/master/mcs/class/Mono.Security/Mono.Security.Cryptography/CryptoTools.cs
 
 GENERATED_SOURCES = \
 	Crimson.Security.Cryptography/AesKernel.g.cs	\
